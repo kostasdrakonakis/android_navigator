@@ -1,1 +1,1 @@
-include ':app', ':compiler', ':annotation'
+include ':app', ':android-navigator-compiler', ':android-navigator-annotations', ':android-navigator'

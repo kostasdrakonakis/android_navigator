@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.androidnavigator">
+    package="com.github.kostasdrakonakis.example">
 
     <application
         android:allowBackup="true"
