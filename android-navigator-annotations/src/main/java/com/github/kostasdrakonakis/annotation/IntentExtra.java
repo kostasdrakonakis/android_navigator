@@ -12,5 +12,5 @@ import java.lang.annotation.Target;
 public @interface IntentExtra {
     IntentType type();
 
-    String typeValue();
+    String parameter();
 }

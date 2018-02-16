@@ -136,10 +136,11 @@ public class IntentProcessor extends AbstractProcessor {
                     for (IntentExtraData data : values) {
 
                         IntentType type = data.getType();
-                        String typeValue = data.getTypeValue();
+                        String parameter = data.getParameter();
                         String constName = "EXTRA_"
                                 + activityName.toUpperCase()
-                                + "_" + typeValue.toUpperCase();
+                                + "_" + parameter.toUpperCase();
+
 
                         Class cls = getClassFromType(type);
                         if (cls == null) {
@@ -151,11 +152,12 @@ public class IntentProcessor extends AbstractProcessor {
                                 .initializer("$S", constName)
                                 .build();
                         navigatorClass.addField(fieldSpec);
-                        builder.addParameter(cls, typeValue);
+
+                        builder.addParameter(cls, parameter);
                         builder.addStatement(INTENT_PUT_EXTRA
                                 + constName
                                 + COMMA_SEPARATION
-                                + typeValue
+                                + parameter
                                 + CLOSING_BRACKET);
                     }
                     builder.addStatement(START_ACTIVITY_INTENT);

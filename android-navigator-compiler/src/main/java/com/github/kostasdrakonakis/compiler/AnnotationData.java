@@ -12,7 +12,7 @@ class AnnotationData {
     AnnotationData(IntentExtra[] values, String packageName) {
         typeList = new ArrayList<>();
         for (IntentExtra extra : values) {
-            typeList.add(new IntentExtraData(extra.typeValue(), extra.type()));
+            typeList.add(new IntentExtraData(extra.parameter(), extra.type()));
         }
         this.packageName = packageName;
     }
