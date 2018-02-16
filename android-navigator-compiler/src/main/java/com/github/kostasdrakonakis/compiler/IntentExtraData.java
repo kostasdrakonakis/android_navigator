@@ -3,16 +3,16 @@ package com.github.kostasdrakonakis.compiler;
 import com.github.kostasdrakonakis.annotation.IntentType;
 
 class IntentExtraData {
-    private String typeValue;
+    private String parameter;
     private IntentType type;
 
-    IntentExtraData(String typeValue, IntentType type) {
-        this.typeValue = typeValue;
+    IntentExtraData(String parameter, IntentType type) {
+        this.parameter = parameter;
         this.type = type;
     }
 
-    String getTypeValue() {
-        return typeValue;
+    String getParameter() {
+        return parameter;
     }
 
     IntentType getType() {

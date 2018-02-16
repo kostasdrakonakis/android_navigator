@@ -11,6 +11,7 @@ class Constants {
 
     static final String COMMA_SEPARATION = ", ";
     static final String GENERATED_CLASS_NAME = "IntentNavigator";
+    static final String INTENT_PROPERTY_CLASS_SUFFIX = "_INTENT_PROPERTY_BINDING";
     static final String NEW_INTENT_STATEMENT = "Intent intent = new $T($L, $L" + CLOSING_BRACKET;
     static final String INTENT_PUT_EXTRA = "intent.putExtra(";
     static final String METHOD_PREFIX = "start";
