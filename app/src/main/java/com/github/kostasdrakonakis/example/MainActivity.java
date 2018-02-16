@@ -6,36 +6,42 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.github.kostasdrakonakis.androidnavigator.IntentNavigator;
+import com.github.kostasdrakonakis.androidnavigator.IntentNavigatorBinder;
 import com.github.kostasdrakonakis.annotation.Intent;
 import com.github.kostasdrakonakis.annotation.IntentExtra;
+import com.github.kostasdrakonakis.annotation.IntentProperty;
 import com.github.kostasdrakonakis.annotation.IntentType;
 
 import static android.text.TextUtils.isEmpty;
 
 @Intent({
-        @IntentExtra(type = IntentType.INT, typeValue = "id"),
-        @IntentExtra(type = IntentType.STRING, typeValue = "name"),
-        @IntentExtra(type = IntentType.STRING, typeValue = "title")
+        @IntentExtra(type = IntentType.INT, parameter = "id"),
+        @IntentExtra(type = IntentType.STRING, parameter = "name"),
+        @IntentExtra(type = IntentType.STRING, parameter = "title")
 })
 public class MainActivity extends AppCompatActivity {
+
+    @IntentProperty("id")
+    public int myId;
+    @IntentProperty("name")
+    public String name;
+    @IntentProperty("title")
+    public String title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        int id = getIntent().getIntExtra(IntentNavigator.EXTRA_MAINACTIVITY_ID, 0);
-        String name = getIntent().getStringExtra(IntentNavigator.EXTRA_MAINACTIVITY_NAME);
-        String title = getIntent().getStringExtra(IntentNavigator.EXTRA_MAINACTIVITY_TITLE);
+        IntentNavigatorBinder.bind(this);
 
         TextView textView = findViewById(R.id.main_text);
 
-        if (id > 0 && !isEmpty(title) && !isEmpty(name)) {
-            String text = "Id: " + id + " Title: " + title + " Name: " + name;
+        if (myId > 0 && !isEmpty(title) && !isEmpty(name)) {
+            String text = "Id: " + myId + " Title: " + title + " Name: " + name;
             textView.setText(text);
         }
 
-        findViewById(R.id.main_text).setOnClickListener(new View.OnClickListener() {
+        textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 IntentNavigator.startSecondActivity(MainActivity.this);

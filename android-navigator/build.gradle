@@ -23,6 +23,7 @@ apply from: 'https://raw.githubusercontent.com/kostasdrakonakis/maven-upload/mas
 apply from: 'https://raw.githubusercontent.com/kostasdrakonakis/maven-upload/master/publications.gradle'
 
 dependencies {
+    implementation 'com.android.support:appcompat-v7:27.0.2'
     api project(':android-navigator-annotations')
     androidTestAnnotationProcessor project(':android-navigator-compiler')
 }

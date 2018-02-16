@@ -1,9 +1,9 @@
 package com.github.kostasdrakonakis.compiler;
 
 import com.github.kostasdrakonakis.annotation.Intent;
+import com.github.kostasdrakonakis.annotation.IntentProperty;
 import com.github.kostasdrakonakis.annotation.IntentType;
 import com.google.auto.service.AutoService;
-import com.google.common.collect.ImmutableSet;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
@@ -11,13 +11,11 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
-
-import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,48 +31,34 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import static com.github.kostasdrakonakis.compiler.Constants.ACTIVITY;
 import static com.github.kostasdrakonakis.compiler.Constants.CLASS;
 import static com.github.kostasdrakonakis.compiler.Constants.CLOSING_BRACKET;
 import static com.github.kostasdrakonakis.compiler.Constants.COMMA_SEPARATION;
 import static com.github.kostasdrakonakis.compiler.Constants.GENERATED_CLASS_NAME;
-import static com.github.kostasdrakonakis.compiler.Constants.INTENT_PUT_EXTRA;
-import static com.github.kostasdrakonakis.compiler.Constants.PACKAGE_NAME;
-import static com.github.kostasdrakonakis.compiler.Constants.START_ACTIVITY_NEW_INTENT;
 import static com.github.kostasdrakonakis.compiler.Constants.INTENT_CLASS;
+import static com.github.kostasdrakonakis.compiler.Constants.INTENT_PROPERTY_CLASS_SUFFIX;
+import static com.github.kostasdrakonakis.compiler.Constants.INTENT_PUT_EXTRA;
 import static com.github.kostasdrakonakis.compiler.Constants.METHOD_PREFIX;
 import static com.github.kostasdrakonakis.compiler.Constants.NEW_INTENT_STATEMENT;
+import static com.github.kostasdrakonakis.compiler.Constants.PACKAGE_NAME;
 import static com.github.kostasdrakonakis.compiler.Constants.START_ACTIVITY_INTENT;
+import static com.github.kostasdrakonakis.compiler.Constants.START_ACTIVITY_NEW_INTENT;
 
 @AutoService(Processor.class)
 public class IntentProcessor extends AbstractProcessor {
-
-    private static final String MANIFEST_DIR = System.getProperty("user.dir") +
-            File.separator + "app" +
-            File.separator + "src" +
-            File.separator + "main" +
-            File.separator + "AndroidManifest.xml";
-
-    private static final String LIB_DIR = System.getProperty("user.dir") +
-            File.separator + "android-navigator" +
-            File.separator + "src" +
-            File.separator + "main" +
-            File.separator + "java" +
-            File.separator + "com" +
-            File.separator + "github" +
-            File.separator + "kostasdrakonakis" +
-            File.separator + "androidnavigator";
 
     private Filer filer;
     private Messager messager;
     private Elements elements;
     private Map<String, AnnotationData> activitiesMap;
+    private Map<String, String> intentPropertiesMap;
+    private Map<String, String> extraDataMap;
+    private List<IntentPropertyData> fields;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnvironment) {
@@ -83,16 +67,20 @@ public class IntentProcessor extends AbstractProcessor {
         messager = processingEnvironment.getMessager();
         elements = processingEnvironment.getElementUtils();
         activitiesMap = new HashMap<>();
+        intentPropertiesMap = new HashMap<>();
+        extraDataMap = new HashMap<>();
+        fields = new ArrayList<>();
     }
 
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
         try {
-            // 1- Find all annotated element
+
             for (Element element : roundEnvironment.getElementsAnnotatedWith(Intent.class)) {
 
                 if (element.getKind() != ElementKind.CLASS) {
-                    messager.printMessage(Diagnostic.Kind.ERROR, "Can be applied to class.");
+                    messager.printMessage(
+                            Diagnostic.Kind.ERROR, "@Intent must be applied to class.");
                     return true;
                 }
                 TypeElement typeElement = (TypeElement) element;
@@ -101,31 +89,50 @@ public class IntentProcessor extends AbstractProcessor {
                 String activity = typeElement.getSimpleName().toString();
                 String packageName = elements.getPackageOf(typeElement)
                         .getQualifiedName().toString();
-
-                try {
-                    Class activityClass = Class.forName(packageName + activity);
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
                 activitiesMap.put(activity, new AnnotationData(intent.value(), packageName));
             }
 
-            // 2- Generate a class
+
+            for (Element element : roundEnvironment.getElementsAnnotatedWith(IntentProperty.class)) {
+
+                if (element.getKind() != ElementKind.FIELD) {
+                    messager.printMessage(
+                            Diagnostic.Kind.ERROR, "@IntentProperty must be applied to fields.");
+                    return true;
+                }
+                TypeElement typeElement = (TypeElement) element.getEnclosingElement();
+                TypeMirror mirror = element.asType();
+                IntentProperty intentProperty = element.getAnnotation(IntentProperty.class);
+
+                String activity = typeElement.getSimpleName().toString();
+                String packageName = elements.getPackageOf(typeElement)
+                        .getQualifiedName().toString();
+
+                fields.add(new IntentPropertyData(
+                        element.getSimpleName().toString(),
+                        intentProperty.value(),
+                        mirror.toString()));
+                intentPropertiesMap.put(activity, packageName);
+            }
+
             TypeSpec.Builder navigatorClass = TypeSpec
                     .classBuilder(GENERATED_CLASS_NAME)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
 
             for (Map.Entry<String, AnnotationData> element : activitiesMap.entrySet()) {
-                AnnotationData annotationData = element.getValue();
                 String activityName = element.getKey();
+                AnnotationData annotationData = element.getValue();
+
                 String packageName = annotationData.getPackageName();
                 List<IntentExtraData> values = annotationData.getValues();
+
                 ClassName activityClass = ClassName.get(packageName, activityName);
                 MethodSpec.Builder builder = MethodSpec
                         .methodBuilder(METHOD_PREFIX + activityName)
                         .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                         .returns(TypeName.VOID)
                         .addParameter(ACTIVITY, "activity");
+
                 if (values.size() > 0) {
                     builder.addStatement(
                             NEW_INTENT_STATEMENT,
@@ -141,8 +148,9 @@ public class IntentProcessor extends AbstractProcessor {
                                 + activityName.toUpperCase()
                                 + "_" + parameter.toUpperCase();
 
+                        extraDataMap.put(parameter, constName);
 
-                        Class cls = getClassFromType(type);
+                        Class cls = ClassHelper.getClassFromType(type);
                         if (cls == null) {
                             throw new IllegalArgumentException("Unknown type: " + type);
                         }
@@ -173,6 +181,37 @@ public class IntentProcessor extends AbstractProcessor {
             }
 
             JavaFile.builder(PACKAGE_NAME, navigatorClass.build()).build().writeTo(filer);
+
+            for (Map.Entry<String, String> mapElement : intentPropertiesMap.entrySet()) {
+                String activityName = mapElement.getKey();
+                String packageName = mapElement.getValue();
+                ClassName activityClass = ClassName.get(packageName, activityName);
+
+                TypeSpec.Builder intentPropertyClass = TypeSpec
+                        .classBuilder(activityName + INTENT_PROPERTY_CLASS_SUFFIX)
+                        .addModifiers(Modifier.PUBLIC);
+
+                MethodSpec.Builder intentPropertyConstructorBuilder =
+                        MethodSpec.constructorBuilder().addParameter(activityClass, "activity");
+
+                for (IntentPropertyData data : fields) {
+                    String fieldClass = data.getFieldClass();
+                    String fieldName = data.getFieldName();
+                    String parameterName = data.getAnnotationValue();
+
+                    intentPropertyConstructorBuilder.addStatement("activity."
+                            + fieldName
+                            + " = activity.getIntent()."
+                            + ClassHelper.getIntentExtraFromClass(
+                            fieldClass, extraDataMap.get(parameterName)));
+                }
+
+                MethodSpec intentPropertyConstructor = intentPropertyConstructorBuilder.build();
+                intentPropertyClass.addMethod(intentPropertyConstructor);
+
+                JavaFile.builder(PACKAGE_NAME, intentPropertyClass.build()).build().writeTo(filer);
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -182,7 +221,11 @@ public class IntentProcessor extends AbstractProcessor {
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
-        return ImmutableSet.of(Intent.class.getCanonicalName());
+        Set<String> types = new LinkedHashSet<>();
+        for (Class<? extends Annotation> annotation : getSupportedAnnotations()) {
+            types.add(annotation.getCanonicalName());
+        }
+        return types;
     }
 
     @Override
@@ -190,48 +233,11 @@ public class IntentProcessor extends AbstractProcessor {
         return SourceVersion.latestSupported();
     }
 
-    private Class getClassFromType(IntentType type) {
-        switch (type) {
-            case STRING:
-                return String.class;
-            case INT:
-                return int.class;
-            case BOOLEAN:
-                return boolean.class;
-            case BYTE:
-                return byte.class;
-            case SHORT:
-                return short.class;
-            case LONG:
-                return long.class;
-            case CHAR:
-                return char.class;
-            case FLOAT:
-                return float.class;
-            case DOUBLE:
-                return double.class;
-            case BOOLEAN_ARRAY:
-                return boolean[].class;
-            case BYTE_ARRAY:
-                return byte[].class;
-            case CHAR_ARRAY:
-                return char[].class;
-            case CHAR_SEQUENCE_ARRAY:
-                return CharSequence[].class;
-            case CHAR_SEQUENCE:
-                return CharSequence.class;
-            case LONG_ARRAY:
-                return long[].class;
-            case INT_ARRAY:
-                return int[].class;
-            case STRING_ARRAY:
-                return String[].class;
-            case SHORT_ARRAY:
-                return short[].class;
-            case SERIALIZABLE:
-                return Serializable.class;
-            default:
-                return null;
-        }
+
+    private Set<Class<? extends Annotation>> getSupportedAnnotations() {
+        Set<Class<? extends Annotation>> annotations = new LinkedHashSet<>();
+        annotations.add(Intent.class);
+        annotations.add(IntentProperty.class);
+        return annotations;
     }
 }
