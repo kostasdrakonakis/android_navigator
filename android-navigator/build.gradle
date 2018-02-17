@@ -19,8 +19,6 @@ android {
     }
 
 }
-apply from: 'https://raw.githubusercontent.com/kostasdrakonakis/maven-upload/master/bintray.gradle'
-apply from: 'https://raw.githubusercontent.com/kostasdrakonakis/maven-upload/master/publications.gradle'
 
 dependencies {
     implementation 'com.android.support:appcompat-v7:27.0.2'
