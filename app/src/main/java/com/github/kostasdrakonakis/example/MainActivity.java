@@ -8,17 +8,21 @@ import android.widget.TextView;
 import com.github.kostasdrakonakis.androidnavigator.IntentNavigator;
 import com.github.kostasdrakonakis.androidnavigator.IntentNavigatorBinder;
 import com.github.kostasdrakonakis.annotation.Intent;
+import com.github.kostasdrakonakis.annotation.IntentCategory;
+import com.github.kostasdrakonakis.annotation.IntentCategoryType;
 import com.github.kostasdrakonakis.annotation.IntentExtra;
 import com.github.kostasdrakonakis.annotation.IntentProperty;
 import com.github.kostasdrakonakis.annotation.IntentType;
 
 import static android.text.TextUtils.isEmpty;
 
-@Intent({
-        @IntentExtra(type = IntentType.INT, parameter = "id"),
-        @IntentExtra(type = IntentType.STRING, parameter = "name"),
-        @IntentExtra(type = IntentType.STRING, parameter = "title"),
-        @IntentExtra(type = IntentType.BUNDLE, parameter = "nope")
+@Intent(
+        value = {
+                @IntentExtra(type = IntentType.INT, parameter = "id"),
+                @IntentExtra(type = IntentType.STRING, parameter = "name"),
+                @IntentExtra(type = IntentType.STRING, parameter = "title")
+        }, categories = {
+                @IntentCategory(IntentCategoryType.CATEGORY_DEFAULT)
 })
 public class MainActivity extends AppCompatActivity {
 
@@ -28,8 +32,6 @@ public class MainActivity extends AppCompatActivity {
     public String name;
     @IntentProperty("title")
     public String title;
-    @IntentProperty("nope")
-    public Bundle bundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

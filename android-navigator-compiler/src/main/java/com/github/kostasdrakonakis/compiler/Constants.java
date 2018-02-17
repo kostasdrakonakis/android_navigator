@@ -23,6 +23,8 @@ class Constants {
     static final String PARCELABLE_FIELD = "android.os.Parcelable";
 
     static final String CLASS = CLASS_SUFFIX + CLOSING_BRACKET;
+    static final String INTENT_ADD_FLAGS = "intent.addFlags(Intent.";
+    static final String INTENT_ADD_CATEGORY = "intent.addCategory(Intent.";
 
     static final String START_ACTIVITY_INTENT = START_ACTIVITY_PREFIX + "intent" + CLOSING_BRACKET;
     static final String START_ACTIVITY_NEW_INTENT = START_ACTIVITY_PREFIX + NEW_INTENT;

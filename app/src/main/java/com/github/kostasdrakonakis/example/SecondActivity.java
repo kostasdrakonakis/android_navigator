@@ -15,10 +15,12 @@ public class SecondActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
+        android.content.Intent intent = new android.content.Intent(android.content.Intent.ACTION_VIEW);
+        intent.addCategory("1");
         findViewById(R.id.second_text).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                IntentNavigator.startMainActivity(SecondActivity.this, 2, "Hello", "Nope", new Bundle());
+                IntentNavigator.startMainActivity(SecondActivity.this, 2, "Hello", "Nope");
             }
         });
     }

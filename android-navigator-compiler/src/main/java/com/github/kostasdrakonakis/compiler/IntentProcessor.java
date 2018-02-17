@@ -42,6 +42,8 @@ import static com.github.kostasdrakonakis.compiler.Constants.CLASS;
 import static com.github.kostasdrakonakis.compiler.Constants.CLOSING_BRACKET;
 import static com.github.kostasdrakonakis.compiler.Constants.COMMA_SEPARATION;
 import static com.github.kostasdrakonakis.compiler.Constants.GENERATED_CLASS_NAME;
+import static com.github.kostasdrakonakis.compiler.Constants.INTENT_ADD_CATEGORY;
+import static com.github.kostasdrakonakis.compiler.Constants.INTENT_ADD_FLAGS;
 import static com.github.kostasdrakonakis.compiler.Constants.INTENT_CLASS;
 import static com.github.kostasdrakonakis.compiler.Constants.INTENT_PROPERTY_CLASS_SUFFIX;
 import static com.github.kostasdrakonakis.compiler.Constants.INTENT_PUT_EXTRA;
@@ -93,7 +95,10 @@ public class IntentProcessor extends AbstractProcessor {
                 String activity = typeElement.getSimpleName().toString();
                 String packageName = elements.getPackageOf(typeElement)
                         .getQualifiedName().toString();
-                activitiesMap.put(activity, new AnnotationData(intent.value(), packageName));
+                activitiesMap.put(activity, new AnnotationData(intent.value(),
+                        intent.flags(),
+                        intent.categories(),
+                        packageName));
             }
 
 
@@ -129,6 +134,8 @@ public class IntentProcessor extends AbstractProcessor {
 
                 String packageName = annotationData.getPackageName();
                 List<IntentExtraData> values = annotationData.getValues();
+                List<IntentFlagData> flags = annotationData.getFlags();
+                List<IntentCategoryData> categories = annotationData.getCategories();
 
                 ClassName activityClass = ClassName.get(packageName, activityName);
                 MethodSpec.Builder builder = MethodSpec
@@ -137,47 +144,65 @@ public class IntentProcessor extends AbstractProcessor {
                         .returns(TypeName.VOID)
                         .addParameter(ACTIVITY, "activity");
 
-                if (values.size() > 0) {
+                if (values.size() > 0 || flags.size() > 0 || categories.size() > 0) {
                     builder.addStatement(
                             NEW_INTENT_STATEMENT,
                             INTENT_CLASS,
                             "activity",
                             activityClass + ".class");
 
-                    for (IntentExtraData data : values) {
+                    if (flags.size() > 0) {
+                        for (IntentFlagData data : flags) {
+                            builder.addStatement(INTENT_ADD_FLAGS
+                                    + data.getFlag()
+                                    + CLOSING_BRACKET);
+                        }
+                    }
 
-                        IntentType type = data.getType();
-                        String parameter = data.getParameter();
-                        String constName = "EXTRA_"
-                                + activityName.toUpperCase()
-                                + "_" + parameter.toUpperCase();
+                    if (categories.size() > 0) {
+                        for (IntentCategoryData data : categories) {
+                            builder.addStatement(INTENT_ADD_CATEGORY
+                                    + data.getCategory()
+                                    + CLOSING_BRACKET);
+                        }
+                    }
 
-                        extraDataMap.put(parameter, constName);
+                    if (values.size() > 0) {
+                        for (IntentExtraData data : values) {
 
-                        FieldSpec fieldSpec = FieldSpec.builder(String.class, constName)
-                                .addModifiers(Modifier.PUBLIC, Modifier.FINAL, Modifier.STATIC)
-                                .initializer("$S", constName)
-                                .build();
-                        navigatorClass.addField(fieldSpec);
+                            IntentType type = data.getType();
+                            String parameter = data.getParameter();
+                            String constName = "EXTRA_"
+                                    + activityName.toUpperCase()
+                                    + "_" + parameter.toUpperCase();
 
-                        if (type == IntentType.BUNDLE) {
-                            builder.addParameter(BUNDLE, parameter);
-                        } else if (type == IntentType.PARCELABLE) {
-                            builder.addParameter(PARCELABLE, parameter);
-                        } else {
-                            Class cls = ClassHelper.getClassFromType(type);
-                            if (cls == null) {
-                                throw new IllegalArgumentException("Unknown type: " + type);
+                            extraDataMap.put(parameter, constName);
+
+                            FieldSpec fieldSpec = FieldSpec.builder(String.class, constName)
+                                    .addModifiers(Modifier.PUBLIC, Modifier.FINAL, Modifier.STATIC)
+                                    .initializer("$S", constName)
+                                    .build();
+                            navigatorClass.addField(fieldSpec);
+
+                            if (type == IntentType.BUNDLE) {
+                                builder.addParameter(BUNDLE, parameter);
+                            } else if (type == IntentType.PARCELABLE) {
+                                builder.addParameter(PARCELABLE, parameter);
+                            } else {
+                                Class cls = ClassHelper.getClassFromType(type);
+                                if (cls == null) {
+                                    throw new IllegalArgumentException("Unknown type: " + type);
+                                }
+
+                                builder.addParameter(cls, parameter);
                             }
 
-                            builder.addParameter(cls, parameter);
+                            builder.addStatement(INTENT_PUT_EXTRA
+                                    + constName
+                                    + COMMA_SEPARATION
+                                    + parameter
+                                    + CLOSING_BRACKET);
                         }
-
-                        builder.addStatement(INTENT_PUT_EXTRA
-                                + constName
-                                + COMMA_SEPARATION
-                                + parameter
-                                + CLOSING_BRACKET);
                     }
                     builder.addStatement(START_ACTIVITY_INTENT);
                 } else {
