@@ -17,6 +17,10 @@ class Constants {
     static final String METHOD_PREFIX = "start";
     static final ClassName INTENT_CLASS = ClassName.get("android.content", "Intent");
     static final ClassName ACTIVITY = ClassName.get("android.app", "Activity");
+    static final ClassName BUNDLE = ClassName.get("android.os", "Bundle");
+    static final ClassName PARCELABLE = ClassName.get("android.os", "Parcelable");
+    static final String BUNDLE_FIELD = "android.os.Bundle";
+    static final String PARCELABLE_FIELD = "android.os.Parcelable";
 
     static final String CLASS = CLASS_SUFFIX + CLOSING_BRACKET;
 

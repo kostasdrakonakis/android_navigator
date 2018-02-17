@@ -18,7 +18,7 @@ public class SecondActivity extends AppCompatActivity {
         findViewById(R.id.second_text).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                IntentNavigator.startMainActivity(SecondActivity.this, 2, "Hello", "Nope");
+                IntentNavigator.startMainActivity(SecondActivity.this, 2, "Hello", "Nope", new Bundle());
             }
         });
     }

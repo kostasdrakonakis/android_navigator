@@ -36,6 +36,8 @@ import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic;
 
 import static com.github.kostasdrakonakis.compiler.Constants.ACTIVITY;
+import static com.github.kostasdrakonakis.compiler.Constants.BUNDLE;
+import static com.github.kostasdrakonakis.compiler.Constants.BUNDLE_FIELD;
 import static com.github.kostasdrakonakis.compiler.Constants.CLASS;
 import static com.github.kostasdrakonakis.compiler.Constants.CLOSING_BRACKET;
 import static com.github.kostasdrakonakis.compiler.Constants.COMMA_SEPARATION;
@@ -46,6 +48,8 @@ import static com.github.kostasdrakonakis.compiler.Constants.INTENT_PUT_EXTRA;
 import static com.github.kostasdrakonakis.compiler.Constants.METHOD_PREFIX;
 import static com.github.kostasdrakonakis.compiler.Constants.NEW_INTENT_STATEMENT;
 import static com.github.kostasdrakonakis.compiler.Constants.PACKAGE_NAME;
+import static com.github.kostasdrakonakis.compiler.Constants.PARCELABLE;
+import static com.github.kostasdrakonakis.compiler.Constants.PARCELABLE_FIELD;
 import static com.github.kostasdrakonakis.compiler.Constants.START_ACTIVITY_INTENT;
 import static com.github.kostasdrakonakis.compiler.Constants.START_ACTIVITY_NEW_INTENT;
 
@@ -150,18 +154,25 @@ public class IntentProcessor extends AbstractProcessor {
 
                         extraDataMap.put(parameter, constName);
 
-                        Class cls = ClassHelper.getClassFromType(type);
-                        if (cls == null) {
-                            throw new IllegalArgumentException("Unknown type: " + type);
-                        }
-
                         FieldSpec fieldSpec = FieldSpec.builder(String.class, constName)
                                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL, Modifier.STATIC)
                                 .initializer("$S", constName)
                                 .build();
                         navigatorClass.addField(fieldSpec);
 
-                        builder.addParameter(cls, parameter);
+                        if (type == IntentType.BUNDLE) {
+                            builder.addParameter(BUNDLE, parameter);
+                        } else if (type == IntentType.PARCELABLE) {
+                            builder.addParameter(PARCELABLE, parameter);
+                        } else {
+                            Class cls = ClassHelper.getClassFromType(type);
+                            if (cls == null) {
+                                throw new IllegalArgumentException("Unknown type: " + type);
+                            }
+
+                            builder.addParameter(cls, parameter);
+                        }
+
                         builder.addStatement(INTENT_PUT_EXTRA
                                 + constName
                                 + COMMA_SEPARATION
@@ -199,11 +210,27 @@ public class IntentProcessor extends AbstractProcessor {
                     String fieldName = data.getFieldName();
                     String parameterName = data.getAnnotationValue();
 
-                    intentPropertyConstructorBuilder.addStatement("activity."
-                            + fieldName
-                            + " = activity.getIntent()."
-                            + ClassHelper.getIntentExtraFromClass(
-                            fieldClass, extraDataMap.get(parameterName)));
+                    switch (fieldClass) {
+                        case BUNDLE_FIELD:
+                            intentPropertyConstructorBuilder.addStatement("activity."
+                                    + fieldName
+                                    + " = activity.getIntent().getBundleExtra(\""
+                                    + extraDataMap.get(parameterName) + "\")");
+                            break;
+                        case PARCELABLE_FIELD:
+                            intentPropertyConstructorBuilder.addStatement("activity."
+                                    + fieldName
+                                    + " = activity.getIntent().getParcelable(\""
+                                    + extraDataMap.get(parameterName) + "\")");
+                            break;
+                        default:
+                            intentPropertyConstructorBuilder.addStatement("activity."
+                                    + fieldName
+                                    + " = activity.getIntent()."
+                                    + ClassHelper.getIntentExtraFromClass(
+                                    fieldClass, extraDataMap.get(parameterName)));
+                            break;
+                    }
                 }
 
                 MethodSpec intentPropertyConstructor = intentPropertyConstructorBuilder.build();

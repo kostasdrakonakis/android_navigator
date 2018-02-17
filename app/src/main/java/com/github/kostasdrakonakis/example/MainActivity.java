@@ -17,7 +17,8 @@ import static android.text.TextUtils.isEmpty;
 @Intent({
         @IntentExtra(type = IntentType.INT, parameter = "id"),
         @IntentExtra(type = IntentType.STRING, parameter = "name"),
-        @IntentExtra(type = IntentType.STRING, parameter = "title")
+        @IntentExtra(type = IntentType.STRING, parameter = "title"),
+        @IntentExtra(type = IntentType.BUNDLE, parameter = "nope")
 })
 public class MainActivity extends AppCompatActivity {
 
@@ -27,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
     public String name;
     @IntentProperty("title")
     public String title;
+    @IntentProperty("nope")
+    public Bundle bundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
