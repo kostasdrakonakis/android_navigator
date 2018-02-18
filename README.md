@@ -1,6 +1,32 @@
-Android Navigator
+Android Navigator [ ![Download](https://api.bintray.com/packages/kdrakonakis/maven/android-navigator/images/download.svg) ](https://bintray.com/kdrakonakis/maven/android-navigator/_latestVersion)  [ ![Compiler](https://api.bintray.com/packages/kdrakonakis/maven/android-navigator-compiler/images/download.svg) ](https://bintray.com/kdrakonakis/maven/android-navigator-compiler/_latestVersion)
+
 
 Removes the boilerplate code when it comes to create intents for navigating between Activities.
+
+Download
+--------
+
+Download the latest JAR or grab via Maven:
+```xml
+<dependency>
+  <groupId>com.github.kostasdrakonakis</groupId>
+  <artifactId>android-navigator</artifactId>
+  <version>1.0.2</version>
+  <type>pom</type>
+</dependency>
+
+<dependency>
+  <groupId>com.github.kostasdrakonakis</groupId>
+  <artifactId>android-navigator-compiler</artifactId>
+  <version>1.0.2</version>
+  <type>pom</type>
+</dependency>
+```
+or Gradle:
+```groovy
+implementation 'com.github.kostasdrakonakis:android-navigator:1.0.2'
+annotationProcessor 'com.github.kostasdrakonakis:android-navigator-compiler:1.0.2'
+```
 
 Usage
 -----
@@ -128,10 +154,19 @@ public enum IntentType {
 }
 ```
 
+TODO
+----
+
++ Add Flags
++ Add Categories
++ Add Actions
+
+Feel free to submit PR's. Also open to suggestions!
+
 License
 -------
 
- Copyright 2017 Kostas Drakonakis
+ Copyright 2018 Kostas Drakonakis
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.

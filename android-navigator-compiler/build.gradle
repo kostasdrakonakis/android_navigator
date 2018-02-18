@@ -1,10 +1,10 @@
 apply plugin: 'java-library'
 
-apply from: '../gradle/compiler/bintrayUpload.gradle'
+//apply from: '../gradle/compiler/bintrayUpload.gradle'
 
 dependencies {
-    implementation 'com.google.auto.service:auto-service:1.0-rc4'
-    implementation 'com.squareup:javapoet:1.10.0'
+    implementation 'com.squareup:javapoet:1.9.0'
+    //implementation 'com.github.kostasdrakonakis:android-navigator-annotations:1.0.0'
     implementation project(':android-navigator-annotations')
 }
 

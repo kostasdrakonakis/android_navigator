@@ -3,7 +3,6 @@ package com.github.kostasdrakonakis.compiler;
 import com.github.kostasdrakonakis.annotation.Intent;
 import com.github.kostasdrakonakis.annotation.IntentProperty;
 import com.github.kostasdrakonakis.annotation.IntentType;
-import com.google.auto.service.AutoService;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
@@ -24,7 +23,6 @@ import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
-import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
@@ -55,7 +53,6 @@ import static com.github.kostasdrakonakis.compiler.Constants.PARCELABLE_FIELD;
 import static com.github.kostasdrakonakis.compiler.Constants.START_ACTIVITY_INTENT;
 import static com.github.kostasdrakonakis.compiler.Constants.START_ACTIVITY_NEW_INTENT;
 
-@AutoService(Processor.class)
 public class IntentProcessor extends AbstractProcessor {
 
     private Filer filer;
