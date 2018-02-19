@@ -21,8 +21,8 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:27.0.2'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    //implementation 'com.github.kostasdrakonakis:android-navigator:1.0.2'
-    //annotationProcessor 'com.github.kostasdrakonakis:android-navigator-compiler:1.0.2'
+//    implementation 'com.github.kostasdrakonakis:android-navigator:1.1.0'
+//    annotationProcessor 'com.github.kostasdrakonakis:android-navigator-compiler:1.1.0'
     implementation project(':android-navigator')
     annotationProcessor project(':android-navigator-compiler')
 }

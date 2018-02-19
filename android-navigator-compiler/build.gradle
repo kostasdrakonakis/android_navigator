@@ -4,7 +4,7 @@ apply plugin: 'java-library'
 
 dependencies {
     implementation 'com.squareup:javapoet:1.9.0'
-    //implementation 'com.github.kostasdrakonakis:android-navigator-annotations:1.0.0'
+    //implementation 'com.github.kostasdrakonakis:android-navigator-annotations:1.1.0'
     implementation project(':android-navigator-annotations')
 }
 

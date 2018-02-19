@@ -11,19 +11,23 @@ import com.github.kostasdrakonakis.annotation.Intent;
 import com.github.kostasdrakonakis.annotation.IntentCategory;
 import com.github.kostasdrakonakis.annotation.IntentCategoryType;
 import com.github.kostasdrakonakis.annotation.IntentExtra;
+import com.github.kostasdrakonakis.annotation.IntentFlag;
+import com.github.kostasdrakonakis.annotation.IntentFlagType;
 import com.github.kostasdrakonakis.annotation.IntentProperty;
 import com.github.kostasdrakonakis.annotation.IntentType;
 
 import static android.text.TextUtils.isEmpty;
 
-@Intent(
-        value = {
-                @IntentExtra(type = IntentType.INT, parameter = "id"),
-                @IntentExtra(type = IntentType.STRING, parameter = "name"),
-                @IntentExtra(type = IntentType.STRING, parameter = "title")
-        }, categories = {
-                @IntentCategory(IntentCategoryType.CATEGORY_DEFAULT)
-})
+@Intent(value = {
+        @IntentExtra(type = IntentType.INT, parameter = "id"),
+        @IntentExtra(type = IntentType.STRING, parameter = "name"),
+        @IntentExtra(type = IntentType.STRING, parameter = "title")
+}, categories = {
+        @IntentCategory(IntentCategoryType.CATEGORY_DEFAULT)
+}, flags = {
+        @IntentFlag(IntentFlagType.FLAG_ACTIVITY_CLEAR_TOP)
+}
+)
 public class MainActivity extends AppCompatActivity {
 
     @IntentProperty("id")
