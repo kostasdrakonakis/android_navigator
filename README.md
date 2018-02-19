@@ -1,4 +1,4 @@
-Android Navigator [ ![Download](https://api.bintray.com/packages/kdrakonakis/maven/android-navigator/images/download.svg) ](https://bintray.com/kdrakonakis/maven/android-navigator/_latestVersion)  [ ![Compiler](https://api.bintray.com/packages/kdrakonakis/maven/android-navigator-compiler/images/download.svg) ](https://bintray.com/kdrakonakis/maven/android-navigator-compiler/_latestVersion)
+Android Navigator [ ![Download](https://api.bintray.com/packages/kdrakonakis/maven/android-navigator/images/download.svg) ](https://bintray.com/kdrakonakis/maven/android-navigator/_latestVersion)
 
 
 Removes the boilerplate code when it comes to create intents for navigating between Activities.
@@ -11,21 +11,19 @@ Download the latest JAR or grab via Maven:
 <dependency>
   <groupId>com.github.kostasdrakonakis</groupId>
   <artifactId>android-navigator</artifactId>
-  <version>1.0.2</version>
-  <type>pom</type>
+  <version>1.1.0</version>
 </dependency>
 
 <dependency>
   <groupId>com.github.kostasdrakonakis</groupId>
   <artifactId>android-navigator-compiler</artifactId>
-  <version>1.0.2</version>
-  <type>pom</type>
+  <version>1.1.0</version>
 </dependency>
 ```
 or Gradle:
 ```groovy
-implementation 'com.github.kostasdrakonakis:android-navigator:1.0.2'
-annotationProcessor 'com.github.kostasdrakonakis:android-navigator-compiler:1.0.2'
+implementation 'com.github.kostasdrakonakis:android-navigator:1.1.0'
+annotationProcessor 'com.github.kostasdrakonakis:android-navigator-compiler:1.1.0'
 ```
 
 Usage
@@ -89,7 +87,6 @@ public class SecondActivity extends AppCompatActivity {
 }
 
 
-
 @Intent({
         @IntentExtra(type = IntentType.INT, parameter = "id"),
         @IntentExtra(type = IntentType.STRING, parameter = "name"),
@@ -128,6 +125,19 @@ public class MainActivity extends AppCompatActivity {
 }
 ```
 
+You can also add Category or Flags to @Intent like this:
+
+```java
+@Intent(
+    categories = {
+        @IntentCategory(IntentCategoryType.CATEGORY_DEFAULT)
+    },
+    flags = {
+        @IntentFlag(IntentFlagType.FLAG_ACTIVITY_CLEAR_TOP)
+    }
+)
+```
+
 You can see the currently supported IntentTypes here:
 
 ```java
@@ -157,9 +167,9 @@ public enum IntentType {
 TODO
 ----
 
-+ Add Flags
-+ Add Categories
 + Add Actions
++ Add support for startActivityForResult
++ Add support for start Service
 
 Feel free to submit PR's. Also open to suggestions!
 

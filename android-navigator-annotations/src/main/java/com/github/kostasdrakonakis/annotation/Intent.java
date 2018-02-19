@@ -11,4 +11,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface Intent {
     IntentExtra[] value() default {};
+
+    IntentFlag[] flags() default {};
+
+    IntentCategory[] categories() default {};
 }
