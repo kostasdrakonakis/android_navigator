@@ -19,5 +19,7 @@ public enum IntentType {
     INT_ARRAY,
     SHORT_ARRAY,
     STRING_ARRAY,
-    SERIALIZABLE
+    SERIALIZABLE,
+    BUNDLE,
+    PARCELABLE
 }

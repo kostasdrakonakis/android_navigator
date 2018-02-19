@@ -45,6 +45,8 @@ class ClassHelper {
                 return short[].class;
             case SERIALIZABLE:
                 return Serializable.class;
+            case BUNDLE:
+            case PARCELABLE:
             default:
                 return null;
         }

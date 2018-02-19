@@ -17,8 +17,14 @@ class Constants {
     static final String METHOD_PREFIX = "start";
     static final ClassName INTENT_CLASS = ClassName.get("android.content", "Intent");
     static final ClassName ACTIVITY = ClassName.get("android.app", "Activity");
+    static final ClassName BUNDLE = ClassName.get("android.os", "Bundle");
+    static final ClassName PARCELABLE = ClassName.get("android.os", "Parcelable");
+    static final String BUNDLE_FIELD = "android.os.Bundle";
+    static final String PARCELABLE_FIELD = "android.os.Parcelable";
 
     static final String CLASS = CLASS_SUFFIX + CLOSING_BRACKET;
+    static final String INTENT_ADD_FLAGS = "intent.addFlags(Intent.";
+    static final String INTENT_ADD_CATEGORY = "intent.addCategory(Intent.";
 
     static final String START_ACTIVITY_INTENT = START_ACTIVITY_PREFIX + "intent" + CLOSING_BRACKET;
     static final String START_ACTIVITY_NEW_INTENT = START_ACTIVITY_PREFIX + NEW_INTENT;
