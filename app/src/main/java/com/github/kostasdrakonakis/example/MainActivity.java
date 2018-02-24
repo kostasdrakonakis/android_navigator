@@ -44,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
         IntentNavigatorBinder.bind(this);
 
         TextView textView = findViewById(R.id.main_text);
+        android.content.Intent intent = new android.content.Intent(this, SecondActivity.class);
+        startService(intent);
 
         if (myId > 0 && !isEmpty(title) && !isEmpty(name)) {
             String text = "Id: " + myId + " Title: " + title + " Name: " + name;

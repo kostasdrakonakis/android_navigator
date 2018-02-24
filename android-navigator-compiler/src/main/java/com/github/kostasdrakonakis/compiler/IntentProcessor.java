@@ -2,6 +2,7 @@ package com.github.kostasdrakonakis.compiler;
 
 import com.github.kostasdrakonakis.annotation.Intent;
 import com.github.kostasdrakonakis.annotation.IntentProperty;
+import com.github.kostasdrakonakis.annotation.IntentService;
 import com.github.kostasdrakonakis.annotation.IntentType;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
@@ -58,7 +59,8 @@ public class IntentProcessor extends AbstractProcessor {
     private Filer filer;
     private Messager messager;
     private Elements elements;
-    private Map<String, AnnotationData> activitiesMap;
+    private Map<String, IntentData> activitiesMap;
+    private Map<String, IntentServiceData> sservicesMap;
     private Map<String, String> intentPropertiesMap;
     private Map<String, String> extraDataMap;
     private List<IntentPropertyData> fields;
@@ -70,6 +72,7 @@ public class IntentProcessor extends AbstractProcessor {
         messager = processingEnvironment.getMessager();
         elements = processingEnvironment.getElementUtils();
         activitiesMap = new HashMap<>();
+        sservicesMap = new HashMap<>();
         intentPropertiesMap = new HashMap<>();
         extraDataMap = new HashMap<>();
         fields = new ArrayList<>();
@@ -92,10 +95,30 @@ public class IntentProcessor extends AbstractProcessor {
                 String activity = typeElement.getSimpleName().toString();
                 String packageName = elements.getPackageOf(typeElement)
                         .getQualifiedName().toString();
-                activitiesMap.put(activity, new AnnotationData(intent.value(),
+                activitiesMap.put(activity, new IntentData(intent.value(),
                         intent.flags(),
                         intent.categories(),
                         packageName));
+            }
+
+            for (Element element : roundEnvironment.getElementsAnnotatedWith(IntentService.class)) {
+
+                if (element.getKind() != ElementKind.CLASS) {
+                    messager.printMessage(
+                            Diagnostic.Kind.ERROR, "@Intent must be applied to class.");
+                    return true;
+                }
+                TypeElement typeElement = (TypeElement) element;
+
+                IntentService intent = element.getAnnotation(IntentService.class);
+                String activity = typeElement.getSimpleName().toString();
+                String packageName = elements.getPackageOf(typeElement)
+                        .getQualifiedName().toString();
+                sservicesMap.put(activity, new IntentServiceData(intent.extras(),
+                        intent.flags(),
+                        intent.categories(),
+                        packageName,
+                        intent.value()));
             }
 
 
@@ -125,14 +148,14 @@ public class IntentProcessor extends AbstractProcessor {
                     .classBuilder(GENERATED_CLASS_NAME)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
 
-            for (Map.Entry<String, AnnotationData> element : activitiesMap.entrySet()) {
+            for (Map.Entry<String, IntentData> element : activitiesMap.entrySet()) {
                 String activityName = element.getKey();
-                AnnotationData annotationData = element.getValue();
+                IntentData intentData = element.getValue();
 
-                String packageName = annotationData.getPackageName();
-                List<IntentExtraData> values = annotationData.getValues();
-                List<IntentFlagData> flags = annotationData.getFlags();
-                List<IntentCategoryData> categories = annotationData.getCategories();
+                String packageName = intentData.getPackageName();
+                List<IntentExtraData> values = intentData.getValues();
+                List<IntentFlagData> flags = intentData.getFlags();
+                List<IntentCategoryData> categories = intentData.getCategories();
 
                 ClassName activityClass = ClassName.get(packageName, activityName);
                 MethodSpec.Builder builder = MethodSpec
