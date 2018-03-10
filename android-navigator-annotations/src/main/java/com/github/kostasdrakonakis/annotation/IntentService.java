@@ -17,4 +17,6 @@ public @interface IntentService {
     IntentFlag[] flags() default {};
 
     IntentCategory[] categories() default {};
+
+    String type() default "";
 }

@@ -12,10 +12,12 @@ class IntentData {
     private List<IntentFlagData> flagList;
     private List<IntentCategoryData> categoryList;
     private String packageName;
+    private String type;
 
     IntentData(IntentExtra[] values,
                IntentFlag[] flags,
                IntentCategory[] categories,
+               String type,
                String packageName) {
 
         typeList = new ArrayList<>();
@@ -30,22 +32,27 @@ class IntentData {
         for (IntentCategory category : categories) {
             categoryList.add(new IntentCategoryData(category.value().name()));
         }
+        this.type = type;
         this.packageName = packageName;
     }
 
-    protected List<IntentExtraData> getValues() {
+    List<IntentExtraData> getValues() {
         return typeList;
     }
 
-    protected List<IntentFlagData> getFlags() {
+    List<IntentFlagData> getFlags() {
         return flagList;
     }
 
-    protected List<IntentCategoryData> getCategories() {
+    List<IntentCategoryData> getCategories() {
         return categoryList;
     }
 
-    protected String getPackageName() {
+    String getPackageName() {
         return packageName;
+    }
+
+    String getType() {
+        return type;
     }
 }

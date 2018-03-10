@@ -26,7 +26,7 @@ import static android.text.TextUtils.isEmpty;
         @IntentCategory(IntentCategoryType.CATEGORY_DEFAULT)
 }, flags = {
         @IntentFlag(IntentFlagType.FLAG_ACTIVITY_CLEAR_TOP)
-}
+}, type = "message/rfc822"
 )
 public class MainActivity extends AppCompatActivity {
 

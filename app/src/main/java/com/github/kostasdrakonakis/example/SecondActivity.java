@@ -7,11 +7,8 @@ import android.view.View;
 
 import com.github.kostasdrakonakis.androidnavigator.IntentNavigator;
 import com.github.kostasdrakonakis.annotation.Intent;
-import com.github.kostasdrakonakis.annotation.IntentService;
-import com.github.kostasdrakonakis.annotation.ServiceType;
 
 @Intent
-@IntentService(ServiceType.FOREGROUND)
 public class SecondActivity extends AppCompatActivity {
 
     @Override

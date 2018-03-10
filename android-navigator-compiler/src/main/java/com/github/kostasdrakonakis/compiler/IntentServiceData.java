@@ -5,15 +5,16 @@ import com.github.kostasdrakonakis.annotation.IntentExtra;
 import com.github.kostasdrakonakis.annotation.IntentFlag;
 import com.github.kostasdrakonakis.annotation.ServiceType;
 
-public class IntentServiceData extends IntentData {
+class IntentServiceData extends IntentData {
     private ServiceType serviceType;
 
     IntentServiceData(IntentExtra[] values,
                       IntentFlag[] flags,
                       IntentCategory[] categories,
+                      String type,
                       String packageName, ServiceType serviceType) {
 
-        super(values, flags, categories, packageName);
+        super(values, flags, categories, type, packageName);
         this.serviceType = serviceType;
     }
 
