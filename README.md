@@ -11,19 +11,19 @@ Download the latest JAR or grab via Maven:
 <dependency>
   <groupId>com.github.kostasdrakonakis</groupId>
   <artifactId>android-navigator</artifactId>
-  <version>1.1.0</version>
+  <version>1.2.0</version>
 </dependency>
 
 <dependency>
   <groupId>com.github.kostasdrakonakis</groupId>
   <artifactId>android-navigator-compiler</artifactId>
-  <version>1.1.0</version>
+  <version>1.2.0</version>
 </dependency>
 ```
 or Gradle:
 ```groovy
-implementation 'com.github.kostasdrakonakis:android-navigator:1.1.0'
-annotationProcessor 'com.github.kostasdrakonakis:android-navigator-compiler:1.1.0'
+implementation 'com.github.kostasdrakonakis:android-navigator:1.2.0'
+annotationProcessor 'com.github.kostasdrakonakis:android-navigator-compiler:1.2.0'
 ```
 
 Usage
@@ -138,6 +138,24 @@ You can also add Category or Flags to @Intent like this:
 )
 ```
 
+You can also set type to @Intent like this:
+
+```java
+@Intent(type = "message/rfc822")
+```
+
+You can also start Service as foreground or background and also add all the properties applied to @Intent as well like this:
+
+```java
+@IntentService(ServiceType.FOREGROUND) or @IntentService(ServiceType.BACKGROUND)
+
+@IntentService(value = ServiceType.FOREGROUND, extras = {
+        @IntentExtra(type = IntentType.INT, parameter = "id"),
+        @IntentExtra(type = IntentType.STRING, parameter = "name"),
+        @IntentExtra(type = IntentType.STRING, parameter = "title")
+})
+```
+
 You can see the currently supported IntentTypes here:
 
 ```java
@@ -169,7 +187,6 @@ TODO
 
 + Add Actions
 + Add support for startActivityForResult
-+ Add support for start Service
 
 Feel free to submit PR's. Also open to suggestions!
 

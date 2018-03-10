@@ -20,6 +20,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".SecondActivity"/>
+
+        <service android:name=".MyService" />
     </application>
 
 </manifest>
