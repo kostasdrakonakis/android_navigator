@@ -22,8 +22,8 @@ Download the latest JAR or grab via Maven:
 ```
 or Gradle:
 ```groovy
-implementation 'com.github.kostasdrakonakis:android-navigator:1.2.0'
-annotationProcessor 'com.github.kostasdrakonakis:android-navigator-compiler:1.2.0'
+implementation 'com.github.kostasdrakonakis:android-navigator:1.2.1'
+annotationProcessor 'com.github.kostasdrakonakis:android-navigator-compiler:1.2.1'
 ```
 
 Usage
