@@ -11,19 +11,19 @@ Download the latest JAR or grab via Maven:
 <dependency>
   <groupId>com.github.kostasdrakonakis</groupId>
   <artifactId>android-navigator</artifactId>
-  <version>1.2.0</version>
+  <version>1.2.1</version>
 </dependency>
 
 <dependency>
   <groupId>com.github.kostasdrakonakis</groupId>
   <artifactId>android-navigator-compiler</artifactId>
-  <version>1.2.0</version>
+  <version>1.2.1</version>
 </dependency>
 ```
 or Gradle:
 ```groovy
-implementation 'com.github.kostasdrakonakis:android-navigator:1.2.0'
-annotationProcessor 'com.github.kostasdrakonakis:android-navigator-compiler:1.2.0'
+implementation 'com.github.kostasdrakonakis:android-navigator:1.2.1'
+annotationProcessor 'com.github.kostasdrakonakis:android-navigator-compiler:1.2.1'
 ```
 
 Usage

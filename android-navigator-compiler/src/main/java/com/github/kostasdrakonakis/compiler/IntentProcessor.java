@@ -101,6 +101,13 @@ public class IntentProcessor extends AbstractProcessor {
                     .classBuilder(GENERATED_CLASS_NAME)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
 
+            MethodSpec constructor = MethodSpec.constructorBuilder()
+                    .addModifiers(Modifier.PRIVATE)
+                    .addStatement("throw new UnsupportedOperationException(\"No instances\")")
+                    .build();
+
+            navigatorClass.addMethod(constructor);
+
             generateActivities(navigatorClass);
 
             generateServices(navigatorClass);
@@ -341,7 +348,11 @@ public class IntentProcessor extends AbstractProcessor {
                     .returns(TypeName.VOID)
                     .addParameter(CONTEXT, "context");
 
-            if (values.size() > 0 || flags.size() > 0 || categories.size() > 0 || !isEmpty(intentType)) {
+            if (values.size() > 0
+                    || flags.size() > 0
+                    || categories.size() > 0
+                    || !isEmpty(intentType)) {
+
                 builder.addStatement(
                         NEW_INTENT_STATEMENT,
                         INTENT_CLASS,
