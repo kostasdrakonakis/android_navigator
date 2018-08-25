@@ -11,19 +11,19 @@ Download the latest JAR or grab via Maven:
 <dependency>
   <groupId>com.github.kostasdrakonakis</groupId>
   <artifactId>android-navigator</artifactId>
-  <version>1.2.1</version>
+  <version>1.2.2</version>
 </dependency>
 
 <dependency>
   <groupId>com.github.kostasdrakonakis</groupId>
   <artifactId>android-navigator-compiler</artifactId>
-  <version>1.2.1</version>
+  <version>1.2.2</version>
 </dependency>
 ```
 or Gradle:
 ```groovy
-implementation 'com.github.kostasdrakonakis:android-navigator:1.2.1'
-annotationProcessor 'com.github.kostasdrakonakis:android-navigator-compiler:1.2.1'
+implementation 'com.github.kostasdrakonakis:android-navigator:1.2.2'
+annotationProcessor 'com.github.kostasdrakonakis:android-navigator-compiler:1.2.2'
 ```
 
 Usage
@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
 	@IntentProperty("id")
 	public int myId;
 	@IntentProperty("name")
-	public String name;
+	String name;
 	@IntentProperty("title")
 	public String title;
 
@@ -181,6 +181,23 @@ public enum IntentType {
     SERIALIZABLE
 }
 ```
+
+CHANGELOG
+----
+
+**v1.2.2**:
+* Add support for property binding for public, protected, package-private visibility modifiers
+* Add support for modifying default value when property binding
+
+**v1.2.1**:
+* Disabled instantiation of IntentNavigator class and disabled inheritance
+
+**v1.2.0**:
+* Add support for Intent types
+
+**v1.1.0**:
+* Add support for Android classes
+* Add support for Intent flags, Intent Categories
 
 TODO
 ----
