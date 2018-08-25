@@ -12,7 +12,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class IntentNavigatorBinder {
+public final class IntentNavigatorBinder {
 
     private static final String TAG = IntentNavigatorBinder.class.getSimpleName();
     private static boolean debug;
@@ -58,7 +58,7 @@ public class IntentNavigatorBinder {
             return bindingConstructor;
         }
 
-        String clsName = BuildConfig.APPLICATION_ID + "." + cls.getSimpleName();
+        String clsName = cls.getPackage().getName() + "." + cls.getSimpleName();
         if (clsName.startsWith("android.") || clsName.startsWith("java.")) {
             if (debug) Log.d(TAG, "Reached framework class. No further.");
             return null;

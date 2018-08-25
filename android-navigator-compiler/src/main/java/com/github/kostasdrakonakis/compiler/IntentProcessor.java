@@ -27,8 +27,11 @@ import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
@@ -149,8 +152,7 @@ public class IntentProcessor extends AbstractProcessor {
         for (Element element : roundEnvironment.getElementsAnnotatedWith(Intent.class)) {
 
             if (element.getKind() != ElementKind.CLASS) {
-                messager.printMessage(
-                        Diagnostic.Kind.ERROR, "@Intent must be applied to class.");
+                printError("@Intent must be applied to class.");
                 return true;
             }
             TypeElement typeElement = (TypeElement) element;
@@ -172,8 +174,7 @@ public class IntentProcessor extends AbstractProcessor {
         for (Element element : roundEnvironment.getElementsAnnotatedWith(IntentService.class)) {
 
             if (element.getKind() != ElementKind.CLASS) {
-                messager.printMessage(
-                        Diagnostic.Kind.ERROR, "@IntentService must be applied to class.");
+                printError("@IntentService must be applied to class.");
                 return true;
             }
             TypeElement typeElement = (TypeElement) element;
@@ -187,8 +188,8 @@ public class IntentProcessor extends AbstractProcessor {
 
             // Verify that extends from Service
             if (!extendsFromType(mirror, SERVICE_TYPE)) {
-                messager.printMessage(Diagnostic.Kind.ERROR, "Class found: " + foundService);
-                messager.printMessage(Diagnostic.Kind.ERROR, "IntentService annotation must be used in Service class");
+                printError("Class found: " + foundService);
+                printError("IntentService annotation must be used in Service class");
                 return true;
             }
 
@@ -206,28 +207,125 @@ public class IntentProcessor extends AbstractProcessor {
         for (Element element : roundEnvironment.getElementsAnnotatedWith(IntentProperty.class)) {
 
             if (element.getKind() != ElementKind.FIELD) {
-                messager.printMessage(
-                        Diagnostic.Kind.ERROR, "@IntentProperty must be applied to fields.");
+                printError("@IntentProperty must be applied to fields.");
                 return true;
             }
             TypeElement typeElement = (TypeElement) element.getEnclosingElement();
             TypeMirror mirror = element.asType();
-            if (element.getModifiers().contains(Modifier.PRIVATE)
-                    || element.getModifiers().contains(Modifier.DEFAULT)) {
-                messager.printMessage(
-                        Diagnostic.Kind.ERROR, "@IntentProperty must be applied to public fields only.");
+            Set<Modifier> modifiers = element.getModifiers();
+            if (modifiers.contains(Modifier.PRIVATE)
+                    || modifiers.contains(Modifier.FINAL)
+                    || modifiers.contains(Modifier.NATIVE)) {
+
+                printError("@IntentProperty must be applied to public, protected, package-private fields only.");
                 return true;
             }
             IntentProperty intentProperty = element.getAnnotation(IntentProperty.class);
 
             String activity = typeElement.getSimpleName().toString();
-            String packageName = elements.getPackageOf(typeElement)
-                    .getQualifiedName().toString();
+            String packageName = elements.getPackageOf(typeElement).getQualifiedName().toString();
 
-            fields.add(new IntentPropertyData(
-                    element.getSimpleName().toString(),
-                    intentProperty.value(),
-                    mirror.toString()));
+            IntentPropertyData intentPropertyData = new IntentPropertyData(
+                    element.getSimpleName().toString(), intentProperty.value(), mirror.toString());
+
+            for (AnnotationMirror elementMirror : element.getAnnotationMirrors()) {
+                Map<? extends ExecutableElement, ? extends AnnotationValue> map =
+                        elementMirror.getElementValues();
+
+                boolean shouldCheckValue = map.keySet().size() > 1;
+                if (!shouldCheckValue) continue;
+
+                String classType = mirror.toString();
+                boolean isBooleanSet = false;
+                boolean isByteSet = false;
+                boolean isCharSet = false;
+                boolean isFloatSet = false;
+                boolean isLongSet = false;
+                boolean isShortSet = false;
+                boolean isIntSet = false;
+                boolean isDoubleSet = false;
+
+                for (ExecutableElement executableElement : map.keySet()) {
+                    String keyName = executableElement.getSimpleName().toString();
+                    isBooleanSet = "booleanDefaultValue".equals(keyName);
+                    isByteSet = "byteDefaultValue".equals(keyName);
+                    isCharSet = "charDefaultValue".equals(keyName);
+                    isFloatSet = "floatDefaultValue".equals(keyName);
+                    isLongSet = "longDefaultValue".equals(keyName);
+                    isShortSet = "shortDefaultValue".equals(keyName);
+                    isIntSet = "intDefaultValue".equals(keyName);
+                    isDoubleSet = "doubleDefaultValue".equals(keyName);
+                }
+
+                if (isBooleanSet) {
+                    boolean booleanDefaultValue = intentProperty.booleanDefaultValue();
+                    if (classType.equals(boolean.class.getName())) {
+                        intentPropertyData.setBooleanDefaultValue(booleanDefaultValue);
+                    } else {
+                        printError("booleanDefaultValue can be applied to boolean fields only.");
+                        return true;
+                    }
+                } else if (isByteSet) {
+                    byte byteDefaultValue = intentProperty.byteDefaultValue();
+                    if (classType.equals(byte.class.getName())) {
+                        intentPropertyData.setByteDefaultValue(byteDefaultValue);
+                    } else {
+                        printError("byteDefaultValue can be applied to byte fields only.");
+                        return true;
+                    }
+                } else if (isCharSet) {
+                    char charDefaultValue = intentProperty.charDefaultValue();
+                    if (classType.equals(char.class.getName())) {
+                        intentPropertyData.setCharDefaultValue(charDefaultValue);
+                    } else {
+                        printError("charDefaultValue can be applied to char fields only.");
+                        return true;
+                    }
+                } else if (isFloatSet) {
+                    float floatDefaultValue = intentProperty.floatDefaultValue();
+                    if (classType.equals(float.class.getName())) {
+                        intentPropertyData.setFloatDefaultValue(floatDefaultValue);
+                    } else {
+                        printError("floatDefaultValue can be applied to float fields only.");
+                        return true;
+                    }
+                } else if (isLongSet) {
+                    long longDefaultValue = intentProperty.longDefaultValue();
+                    if (classType.equals(long.class.getName())) {
+                        intentPropertyData.setLongDefaultValue(longDefaultValue);
+                    } else {
+                        printError("longDefaultValue can be applied to long fields only.");
+                        return true;
+                    }
+                } else if (isShortSet) {
+                    short shortDefaultValue = intentProperty.shortDefaultValue();
+                    if (classType.equals(short.class.getName())) {
+                        intentPropertyData.setShortDefaultValue(shortDefaultValue);
+                    } else {
+                        printError("shortDefaultValue can be applied to short fields only.");
+                        return true;
+                    }
+                } else if (isIntSet) {
+                    int intDefaultValue = intentProperty.intDefaultValue();
+                    if (classType.equals(int.class.getName())) {
+                        intentPropertyData.setIntDefaultValue(intDefaultValue);
+                    } else {
+                        printError("intDefaultValue can be applied to int fields only.");
+                        return true;
+                    }
+                } else if (isDoubleSet) {
+                    double doubleDefaultValue = intentProperty.doubleDefaultValue();
+                    if (classType.equals(double.class.getName())) {
+                        intentPropertyData.setDoubleDefaultValue(doubleDefaultValue);
+                    } else {
+                        printError("doubleDefaultValue can be applied to double fields only.");
+                        return true;
+                    }
+                }
+
+            }
+
+            fields.add(intentPropertyData);
             intentPropertiesMap.put(activity, packageName);
         }
         return false;
@@ -251,9 +349,12 @@ public class IntentProcessor extends AbstractProcessor {
                     .returns(TypeName.VOID)
                     .addParameter(CONTEXT, "context");
 
-            if (values.size() > 0 || flags.size() > 0 || categories.size() > 0 || !isEmpty(intentType)) {
-                builder.addStatement(
-                        NEW_INTENT_STATEMENT,
+            if (values.size() > 0
+                    || flags.size() > 0
+                    || categories.size() > 0
+                    || !isEmpty(intentType)) {
+
+                builder.addStatement(NEW_INTENT_STATEMENT,
                         INTENT_CLASS,
                         "context",
                         activityClass + ".class");
@@ -454,9 +555,14 @@ public class IntentProcessor extends AbstractProcessor {
 
             TypeSpec.Builder intentPropertyClass = TypeSpec
                     .classBuilder(activityName + INTENT_PROPERTY_CLASS_SUFFIX)
+                    .addModifiers(Modifier.FINAL)
                     .addModifiers(Modifier.PUBLIC);
 
-            MethodSpec.Builder intentPropertyConstructorBuilder =
+            MethodSpec.Builder emptyBuilder = MethodSpec.constructorBuilder();
+            emptyBuilder.addModifiers(Modifier.PRIVATE);
+            emptyBuilder.addStatement("throw new UnsupportedOperationException(\"No instances\")");
+
+            MethodSpec.Builder intentPropertyBuilder =
                     MethodSpec.constructorBuilder().addParameter(activityClass, "activity");
 
             for (IntentPropertyData data : fields) {
@@ -466,31 +572,34 @@ public class IntentProcessor extends AbstractProcessor {
 
                 switch (fieldClass) {
                     case BUNDLE_FIELD:
-                        intentPropertyConstructorBuilder.addStatement("activity."
+                        intentPropertyBuilder.addStatement("activity."
                                 + fieldName
                                 + " = activity.getIntent().getBundleExtra(\""
                                 + extraDataMap.get(parameterName) + "\")");
                         break;
                     case PARCELABLE_FIELD:
-                        intentPropertyConstructorBuilder.addStatement("activity."
+                        intentPropertyBuilder.addStatement("activity."
                                 + fieldName
                                 + " = activity.getIntent().getParcelable(\""
                                 + extraDataMap.get(parameterName) + "\")");
                         break;
                     default:
-                        intentPropertyConstructorBuilder.addStatement("activity."
+                        intentPropertyBuilder.addStatement("activity."
                                 + fieldName
                                 + " = activity.getIntent()."
                                 + ClassHelper.getIntentExtraFromClass(
-                                fieldClass, extraDataMap.get(parameterName)));
+                                fieldClass, extraDataMap.get(parameterName), data));
                         break;
                 }
             }
 
-            MethodSpec intentPropertyConstructor = intentPropertyConstructorBuilder.build();
+            MethodSpec emptyConstructor = emptyBuilder.build();
+            intentPropertyClass.addMethod(emptyConstructor);
+
+            MethodSpec intentPropertyConstructor = intentPropertyBuilder.build();
             intentPropertyClass.addMethod(intentPropertyConstructor);
 
-            JavaFile.builder(PACKAGE_NAME, intentPropertyClass.build()).build().writeTo(filer);
+            JavaFile.builder(packageName, intentPropertyClass.build()).build().writeTo(filer);
         }
     }
 
@@ -540,5 +649,9 @@ public class IntentProcessor extends AbstractProcessor {
 
     private static boolean isTypeEqual(TypeMirror typeMirror, String otherType) {
         return otherType.equals(typeMirror.toString());
+    }
+
+    private void printError(String message) {
+        messager.printMessage(Diagnostic.Kind.ERROR, message);
     }
 }
