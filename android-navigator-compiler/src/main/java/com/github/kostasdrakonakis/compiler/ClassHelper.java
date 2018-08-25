@@ -66,7 +66,7 @@ class ClassHelper {
         } else if (classType.equals(long.class.getName())) {
             return "getLongExtra(\"" + value + "\", " + data.getLongDefaultValue() + ")";
         } else if (classType.equals(char.class.getName())) {
-            return "getCharExtra(\"" + value + "\", " + data.getCharDefaultValue() + ")";
+            return "getCharExtra(\"" + value + "\", \'" + data.getCharDefaultValue() + "\')";
         } else if (classType.equals(float.class.getName())) {
             return "getFloatExtra(\"" + value + "\", " + data.getFloatDefaultValue() + ")";
         } else if (classType.equals(double.class.getName())) {
