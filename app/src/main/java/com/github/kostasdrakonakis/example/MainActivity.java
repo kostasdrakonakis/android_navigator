@@ -21,6 +21,7 @@ import static android.text.TextUtils.isEmpty;
 @Intent(value = {
         @IntentExtra(type = IntentType.INT, parameter = "id"),
         @IntentExtra(type = IntentType.STRING, parameter = "name"),
+        @IntentExtra(type = IntentType.CHAR, parameter = "mine"),
         @IntentExtra(type = IntentType.STRING, parameter = "title")
 }, categories = {
         @IntentCategory(IntentCategoryType.CATEGORY_DEFAULT)
@@ -36,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     String name;
     @IntentProperty("title")
     public String title;
+    @IntentProperty("mine")
+    public char myChar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,11 +47,9 @@ public class MainActivity extends AppCompatActivity {
         IntentNavigatorBinder.bind(this);
 
         TextView textView = findViewById(R.id.main_text);
-        android.content.Intent intent = new android.content.Intent(this, SecondActivity.class);
-        startService(intent);
 
-        if (myId > 0 && !isEmpty(title) && !isEmpty(name)) {
-            String text = "Id: " + myId + " Title: " + title + " Name: " + name;
+        if (myId > 0 && !isEmpty(title) && !isEmpty(name) && myChar != '\u0000') {
+            String text = "Id: " + myId + " Title: " + title + " Name: " + name + " char: " + myChar;
             textView.setText(text);
         }
 
