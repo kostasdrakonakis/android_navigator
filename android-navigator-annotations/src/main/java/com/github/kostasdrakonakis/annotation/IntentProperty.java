@@ -11,4 +11,20 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface IntentProperty {
     String value();
+
+    int intDefaultValue() default 0;
+
+    double doubleDefaultValue() default 0.0d;
+
+    float floatDefaultValue() default 0.0f;
+
+    long longDefaultValue() default 0L;
+
+    char charDefaultValue() default '\u0000';
+
+    short shortDefaultValue() default 0;
+
+    byte byteDefaultValue() default 0;
+
+    boolean booleanDefaultValue() default false;
 }
