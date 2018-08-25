@@ -30,10 +30,10 @@ import static android.text.TextUtils.isEmpty;
 )
 public class MainActivity extends AppCompatActivity {
 
-    @IntentProperty("id")
+    @IntentProperty(value = "id", intDefaultValue = 1)
     public int myId;
     @IntentProperty("name")
-    public String name;
+    String name;
     @IntentProperty("title")
     public String title;
 

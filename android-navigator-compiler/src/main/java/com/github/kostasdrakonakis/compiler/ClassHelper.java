@@ -52,25 +52,25 @@ class ClassHelper {
         }
     }
 
-    static String getIntentExtraFromClass(String classType, String value) {
+    static String getIntentExtraFromClass(String classType, String value, IntentPropertyData data) {
         if (classType.equals(String.class.getName())) {
             return "getStringExtra(\"" + value + "\")";
         } else if (classType.equals(int.class.getName())) {
-            return "getIntExtra(\"" + value + "\", 0)";
+            return "getIntExtra(\"" + value + "\", " + data.getIntDefaultValue() + ")";
         } else if (classType.equals(boolean.class.getName())) {
-            return "getBooleanExtra(\"" + value + "\", false)";
+            return "getBooleanExtra(\"" + value + "\", " + data.getBooleanDefaultValue() + ")";
         } else if (classType.equals(byte.class.getName())) {
-            return "getByteExtra(\"" + value + "\", 0)";
+            return "getByteExtra(\"" + value + "\", " + data.getByteDefaultValue() + ")";
         } else if (classType.equals(short.class.getName())) {
-            return "getShortExtra(\"" + value + "\", 0)";
+            return "getShortExtra(\"" + value + "\", " + data.getShortDefaultValue() + ")";
         } else if (classType.equals(long.class.getName())) {
-            return "getLongExtra(\"" + value + "\", 0L)";
+            return "getLongExtra(\"" + value + "\", " + data.getLongDefaultValue() + ")";
         } else if (classType.equals(char.class.getName())) {
-            return "getCharExtra(\"" + value + "\", '\\u0000')";
+            return "getCharExtra(\"" + value + "\", " + data.getCharDefaultValue() + ")";
         } else if (classType.equals(float.class.getName())) {
-            return "getFloatExtra(\"" + value + "\", 0.0f)";
+            return "getFloatExtra(\"" + value + "\", " + data.getFloatDefaultValue() + ")";
         } else if (classType.equals(double.class.getName())) {
-            return "getDoubleExtra(\"" + value + "\", 0.0d)";
+            return "getDoubleExtra(\"" + value + "\", " + data.getDoubleDefaultValue() + ")";
         } else if (classType.equals(boolean[].class.getName())) {
             return "getBooleanArrayExtra(\"" + value + "\")";
         } else if (classType.equals(byte[].class.getName())) {
