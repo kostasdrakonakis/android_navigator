@@ -67,7 +67,6 @@ import static com.github.kostasdrakonakis.compiler.Constants.START_SERVICE_NEW_I
 
 public class IntentProcessor extends AbstractProcessor {
 
-    private static final String SERVICE_TYPE = "android.app.Service";
     private Filer filer;
     private Messager messager;
     private Elements elements;
@@ -187,7 +186,7 @@ public class IntentProcessor extends AbstractProcessor {
             ClassName foundService = ClassName.get(packageName, service);
 
             // Verify that extends from Service
-            if (!extendsFromType(mirror, SERVICE_TYPE)) {
+            if (!extendsFromType(mirror, Constants.SERVICE_TYPE)) {
                 printError("Class found: " + foundService);
                 printError("IntentService annotation must be used in Service class");
                 return true;

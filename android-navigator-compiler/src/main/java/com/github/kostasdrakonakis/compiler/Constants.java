@@ -28,6 +28,7 @@ class Constants {
     static final String CLASS = CLASS_SUFFIX + CLOSING_BRACKET;
     static final String INTENT_ADD_FLAGS = "intent.addFlags(Intent.";
     static final String INTENT_ADD_CATEGORY = "intent.addCategory(Intent.";
+    static final String SERVICE_TYPE = "android.app.Service";
 
     static final String START_ACTIVITY_INTENT = START_ACTIVITY_PREFIX + "intent" + CLOSING_BRACKET;
     static final String START_SERVICE_INTENT = START_SERVICE_PREFIX + "intent" + CLOSING_BRACKET;
