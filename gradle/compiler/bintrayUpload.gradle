@@ -2,7 +2,6 @@ apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 
-group = project.getProperty("publishedGroupId")
 // Bintray
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
@@ -13,16 +12,16 @@ bintray {
     publications = ['MyPublication']
     configurations = ['archives']
     pkg {
-        repo = project.getProperty("bintrayRepo")
+        repo = bintrayRepo
         name = "android-navigator-compiler"
-        desc = project.getProperty("libraryDescription")
-        websiteUrl = project.getProperty("siteUrl")
-        vcsUrl = project.getProperty("gitUrl")
-        licenses = project.getProperty("allLicenses")
+        desc = libraryDescription
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = allLicenses
         publish = true
         publicDownloadNumbers = true
         version {
-            desc = project.getProperty("libraryDescription")
+            desc = libraryDescription
             gpg {
                 sign = true //Determines whether to GPG sign the files. The default is false
                 passphrase = properties.getProperty("bintray.gpg.password")
@@ -32,7 +31,7 @@ bintray {
     }
 }
 
-version = project.getProperty("libraryVersion")
+version = libraryVersion
 
 if (project.hasProperty("android")) {
     // Android libraries
@@ -63,20 +62,20 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 def pomConfig = {
     licenses {
         license {
-            name project.getProperty("licenseName")
-            url project.getProperty("licenseUrl")
+            name licenseName
+            url licenseUrl
             distribution "repo"
         }
     }
     developers {
         developer {
-            id project.getProperty("developerId")
-            name project.getProperty("developerName")
-            email project.getProperty("developerEmail")
+            id developerId
+            name developerName
+            email developerEmail
         }
     }
     scm {
-        url project.getProperty("gitUrl")
+        url gitUrl
     }
 }
 
@@ -93,18 +92,18 @@ publishing {
             artifact sourcesJar
             artifact javadocJar
             artifact("$buildDir/libs/${project.getName()}-${version}.jar")
-            groupId project.getProperty("publishedGroupId")
+            groupId publishedGroupId
             artifactId "android-navigator-compiler"
-            version project.getProperty("libraryVersion")
+            version libraryVersion
             pom.withXml {
                 def dependenciesNode = asNode().appendNode('dependencies')
                 getDependencies(configurations.compile, dependenciesNode)
                 getDependencies(configurations.api, dependenciesNode)
                 getDependencies(configurations.implementation, dependenciesNode)
                 def root = asNode()
-                root.appendNode('description', project.getProperty("libraryDescription"))
-                root.appendNode('name', project.getProperty("libraryName"))
-                root.appendNode('url', project.getProperty("siteUrl"))
+                root.appendNode('description', libraryDescription)
+                root.appendNode('name', libraryName)
+                root.appendNode('url', siteUrl)
                 root.children().last() + pomConfig
             }
         }
@@ -119,10 +118,10 @@ def getDependencies(config, dependenciesNode) {
                 dependencyNode.appendNode('groupId', it.group)
                 dependencyNode.appendNode('artifactId', it.name)
                 dependencyNode.appendNode('version', it.version)
-                printAdd(config, it)
+                printAdd(it)
                 def exclusionsNode = dependencyNode.appendNode('exclusions')
                 if (it.excludeRules.size() > 0) {
-                    printAddExclusions(config, it)
+                    printAddExclusions(it)
                     it.excludeRules.each { rule ->
                         def exclusionNode = exclusionsNode.appendNode('exclusion')
                         exclusionNode.appendNode('groupId', rule.group)
@@ -134,8 +133,14 @@ def getDependencies(config, dependenciesNode) {
                     dependencyNode.remove(exclusionsNode)
                 }
             }
-            println "Dependencies size: " + dependenciesNode.children().size()
         }
+    }
+    def dependenciesSize = config.allDependencies.size()
+    if (dependenciesSize > 0) {
+        println "Added Dependencies for configuration: ${config.getName()}"
+        println "Dependencies size: ${dependenciesNode.children().size()}"
+    } else {
+        println "No dependencies found for configuration: ${config.getName()}"
     }
 }
 
@@ -154,10 +159,10 @@ boolean hasExistingNode(dependenciesNode, it) {
     return false
 }
 
-def printAdd(config, it) {
-    println "Added dependency: '" + config.name + " " + it.group + ":" + it.name + ":" + it.version + "'"
+def printAdd(it) {
+    println "Added dependency: '${it.group}:${it.name}:${it.version}'"
 }
 
-def printAddExclusions(config, it) {
-    println "Added exclusions for: '" + config.name + " " + it.group + ":" + it.name + ":" + it.version + "'"
+def printAddExclusions(it) {
+    println "Added exclusions for: '${it.group}:${it.name}:${it.version}'"
 }
