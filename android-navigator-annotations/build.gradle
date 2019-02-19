@@ -1,8 +1,6 @@
 apply plugin: 'java-library'
 
-//apply from: '../gradle/annotations/bintrayUpload.gradle'
+apply from: '../gradle/annotations/bintrayUpload.gradle'
 
 dependencies {
 }
-sourceCompatibility = "1.8"
-targetCompatibility = "1.8"
