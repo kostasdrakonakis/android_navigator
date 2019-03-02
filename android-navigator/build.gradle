@@ -28,8 +28,8 @@ apply from: 'https://raw.githubusercontent.com/kostasdrakonakis/maven-upload/mas
 dependencies {
     implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation 'com.android.support:support-annotations:28.0.0'
-    //api 'com.github.kostasdrakonakis:android-navigator-annotations:1.2.4'
-    //androidTestAnnotationProcessor 'com.github.kostasdrakonakis:android-navigator-compiler:1.2.4'
+//    api 'com.github.kostasdrakonakis:android-navigator-annotations:1.2.5'
+//    androidTestAnnotationProcessor 'com.github.kostasdrakonakis:android-navigator-compiler:1.2.5'
     api project(':android-navigator-annotations')
     androidTestAnnotationProcessor project(':android-navigator-compiler')
 }

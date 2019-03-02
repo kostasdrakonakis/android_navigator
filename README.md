@@ -11,19 +11,20 @@ Download the latest JAR or grab via Maven:
 <dependency>
   <groupId>com.github.kostasdrakonakis</groupId>
   <artifactId>android-navigator</artifactId>
-  <version>1.2.4</version>
+  <version>1.2.5</version>
 </dependency>
-
+````
+```xml
 <dependency>
   <groupId>com.github.kostasdrakonakis</groupId>
   <artifactId>android-navigator-compiler</artifactId>
-  <version>1.2.4</version>
+  <version>1.2.5</version>
 </dependency>
 ```
 or Gradle:
 ```groovy
-implementation 'com.github.kostasdrakonakis:android-navigator:1.2.4'
-annotationProcessor 'com.github.kostasdrakonakis:android-navigator-compiler:1.2.4'
+implementation 'com.github.kostasdrakonakis:android-navigator:1.2.5'
+annotationProcessor 'com.github.kostasdrakonakis:android-navigator-compiler:1.2.5'
 ```
 
 Usage
@@ -95,7 +96,7 @@ public class SecondActivity extends AppCompatActivity {
 public class MainActivity extends AppCompatActivity {
 
 	@IntentProperty("id")
-	public int myId;
+	int myId;
 	@IntentProperty("name")
 	String name;
 	@IntentProperty("title")
@@ -136,24 +137,27 @@ You can also add Category or Flags to @Intent like this:
         @IntentFlag(IntentFlagType.FLAG_ACTIVITY_CLEAR_TOP)
     }
 )
+public class SecondActivity extends AppCompatActivity {}
 ```
 
 You can also set type to @Intent like this:
 
 ```java
 @Intent(type = "message/rfc822")
+public class SecondActivity extends AppCompatActivity {}
 ```
 
 You can also start Service as foreground or background and also add all the properties applied to @Intent as well like this:
 
 ```java
-@IntentService(ServiceType.FOREGROUND) or @IntentService(ServiceType.BACKGROUND)
+@IntentService(ServiceType.FOREGROUND) //or @IntentService(ServiceType.BACKGROUND)
 
 @IntentService(value = ServiceType.FOREGROUND, extras = {
         @IntentExtra(type = IntentType.INT, parameter = "id"),
         @IntentExtra(type = IntentType.STRING, parameter = "name"),
         @IntentExtra(type = IntentType.STRING, parameter = "title")
 })
+public class MyService extends Service {}
 ```
 
 You can see the currently supported IntentTypes here:
@@ -184,6 +188,9 @@ public enum IntentType {
 
 CHANGELOG
 ----
+**v1.2.5**:
+* Add Javadoc in Annotations
+
 **v1.2.4**:
 * Add support for Java 8
 

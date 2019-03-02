@@ -4,6 +4,6 @@ apply from: '../gradle/compiler/bintrayUpload.gradle'
 
 dependencies {
     implementation 'com.squareup:javapoet:1.11.1'
-    //implementation 'com.github.kostasdrakonakis:android-navigator-annotations:1.2.4'
+    //implementation 'com.github.kostasdrakonakis:android-navigator-annotations:1.2.5'
     implementation project(':android-navigator-annotations')
 }

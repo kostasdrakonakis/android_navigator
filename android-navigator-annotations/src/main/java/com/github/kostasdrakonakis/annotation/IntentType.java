@@ -1,5 +1,8 @@
 package com.github.kostasdrakonakis.annotation;
 
+/**
+ * Declare the type for {@literal @}{@link IntentExtra}
+ */
 public enum IntentType {
     INT,
     LONG,
