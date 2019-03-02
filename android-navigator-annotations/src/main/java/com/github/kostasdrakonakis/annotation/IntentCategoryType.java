@@ -1,5 +1,8 @@
 package com.github.kostasdrakonakis.annotation;
 
+/**
+ * Category Types for {@literal @}{@link Intent}
+ */
 public enum IntentCategoryType {
     CATEGORY_ALTERNATIVE,
     CATEGORY_APP_BROWSER,

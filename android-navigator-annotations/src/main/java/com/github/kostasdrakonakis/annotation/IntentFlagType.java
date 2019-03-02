@@ -1,5 +1,8 @@
 package com.github.kostasdrakonakis.annotation;
 
+/**
+ * Flag Types for {@literal @}{@link Intent}
+ */
 public enum IntentFlagType {
     FLAG_GRANT_READ_URI_PERMISSION,
     FLAG_GRANT_WRITE_URI_PERMISSION,
