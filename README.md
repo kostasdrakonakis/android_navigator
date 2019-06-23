@@ -1,4 +1,4 @@
-Android Navigator [ ![Download](https://api.bintray.com/packages/kdrakonakis/maven/android-navigator/images/download.svg) ](https://bintray.com/kdrakonakis/maven/android-navigator/_latestVersion) [![Build Status](https://travis-ci.org/kostasdrakonakis/android_navigator.svg?branch=master)](https://travis-ci.org/kostasdrakonakis/android_navigator)
+Android Navigator [ ![Download](https://api.bintray.com/packages/kdrakonakis/maven/android-navigator/images/download.svg) ](https://bintray.com/kdrakonakis/maven/android-navigator/_latestVersion) [![Build Status](https://travis-ci.org/kostasdrakonakis/android_navigator.svg?branch=develop)](https://travis-ci.org/kostasdrakonakis/android_navigator)
 
 
 Removes the boilerplate code when it comes to create intents for navigating between Activities.
