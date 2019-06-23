@@ -3,12 +3,25 @@ apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 
 // Bintray
-Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
+def bintrayUser = ''
+def bintrayApiKey = ''
+def bintrayPassword = ''
+
+if (project.rootProject.file('local.properties').exists()) {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    bintrayUser = properties.getProperty("bintray.user")
+    bintrayApiKey = properties.getProperty("bintray.apikey")
+    bintrayPassword = properties.getProperty("bintray.gpg.password")
+} else {
+    bintrayUser = defaultBintrayUser
+    bintrayApiKey = defaultBintrayApiKey
+    bintrayPassword = defaultBintrayPassword
+}
 
 bintray {
-    user = properties.getProperty("bintray.user")
-    key = properties.getProperty("bintray.apikey")
+    user = bintrayUser
+    key = bintrayApiKey
     publications = ['MyPublication']
     configurations = ['archives']
     pkg {
@@ -24,7 +37,7 @@ bintray {
             desc = libraryDescription
             gpg {
                 sign = true //Determines whether to GPG sign the files. The default is false
-                passphrase = properties.getProperty("bintray.gpg.password")
+                passphrase = bintrayPassword
                 //Optional. The passphrase for GPG signing'
             }
         }
