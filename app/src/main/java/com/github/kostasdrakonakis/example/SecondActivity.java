@@ -1,9 +1,9 @@
 package com.github.kostasdrakonakis.example;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.view.View;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.kostasdrakonakis.androidnavigator.IntentNavigator;
 import com.github.kostasdrakonakis.annotation.Intent;
@@ -17,12 +17,9 @@ public class SecondActivity extends AppCompatActivity {
         setContentView(R.layout.activity_second);
         android.content.Intent intent = new android.content.Intent(android.content.Intent.ACTION_VIEW);
         intent.addCategory("1");
-        findViewById(R.id.second_text).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                char ch = 'a';
-                IntentNavigator.startMainActivity(SecondActivity.this, 2, "Hello", ch, "Nope");
-            }
+        findViewById(R.id.second_text).setOnClickListener(v -> {
+            char ch = 'a';
+            IntentNavigator.startMainActivity(SecondActivity.this, 2, "Hello", ch, "Nope");
         });
     }
 }

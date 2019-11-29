@@ -1,11 +1,11 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         applicationId "com.github.kostasdrakonakis.example"
         minSdkVersion 15
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
     }
@@ -22,11 +22,9 @@ android {
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-//    implementation 'com.github.kostasdrakonakis:android-navigator:1.2.4'
-//    annotationProcessor 'com.github.kostasdrakonakis:android-navigator-compiler:1.2.4'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+//    implementation 'com.github.kostasdrakonakis:android-navigator:1.2.5'
+//    annotationProcessor 'com.github.kostasdrakonakis:android-navigator-compiler:1.2.5'
     implementation project(':android-navigator')
     annotationProcessor project(':android-navigator-compiler')
 }

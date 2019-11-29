@@ -1,9 +1,9 @@
 package com.github.kostasdrakonakis.example;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.kostasdrakonakis.androidnavigator.IntentNavigator;
 import com.github.kostasdrakonakis.androidnavigator.IntentNavigatorBinder;
@@ -53,11 +53,6 @@ public class MainActivity extends AppCompatActivity {
             textView.setText(text);
         }
 
-        textView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                IntentNavigator.startSecondActivity(MainActivity.this);
-            }
-        });
+        textView.setOnClickListener(v -> IntentNavigator.startSecondActivity(MainActivity.this));
     }
 }

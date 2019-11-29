@@ -1,11 +1,12 @@
 package com.github.kostasdrakonakis.androidnavigator;
 
 import android.app.Activity;
-import android.support.annotation.CheckResult;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.UiThread;
 import android.util.Log;
+
+import androidx.annotation.CheckResult;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -69,7 +70,6 @@ public final class IntentNavigatorBinder {
                     cls.getClassLoader().loadClass(clsName + "_INTENT_PROPERTY_BINDING");
             if (debug) Log.d(TAG, "Binding Class: " + bindingClass);
 
-            //noinspection unchecked
             bindingConstructor = bindingClass.getConstructor(cls);
             if (debug) Log.d(TAG, "Loaded binding class and constructor.");
         } catch (ClassNotFoundException e) {

@@ -2,23 +2,6 @@ apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 
-// Bintray
-def bintrayUser = ''
-def bintrayApiKey = ''
-def bintrayPassword = ''
-
-if (project.rootProject.file('local.properties').exists()) {
-    Properties properties = new Properties()
-    properties.load(project.rootProject.file('local.properties').newDataInputStream())
-    bintrayUser = properties.getProperty("bintray.user")
-    bintrayApiKey = properties.getProperty("bintray.apikey")
-    bintrayPassword = properties.getProperty("bintray.gpg.password")
-} else {
-    bintrayUser = defaultBintrayUser
-    bintrayApiKey = defaultBintrayApiKey
-    bintrayPassword = defaultBintrayPassword
-}
-
 bintray {
     user = bintrayUser
     key = bintrayApiKey
@@ -37,7 +20,7 @@ bintray {
             desc = libraryDescription
             gpg {
                 sign = true //Determines whether to GPG sign the files. The default is false
-                passphrase = bintrayPassword
+                passphrase = bintrayGPGPassword
                 //Optional. The passphrase for GPG signing'
             }
         }
@@ -46,52 +29,7 @@ bintray {
 
 version = libraryVersion
 
-if (project.hasProperty("android")) {
-    // Android libraries
-    task sourcesJar(type: Jar) {
-        classifier = 'sources'
-        from android.sourceSets.main.java.srcDirs
-    }
-
-    task javadoc(type: Javadoc) {
-        source = android.sourceSets.main.java.srcDirs
-        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-    }
-} else {
-    // Java libraries
-    task sourcesJar(type: Jar, dependsOn: classes) {
-        classifier = 'sources'
-        from sourceSets.main.allSource
-    }
-}
-
-// Generate javador
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-// Create the pom configuration with maven-publish plugin.
-def pomConfig = {
-    licenses {
-        license {
-            name licenseName
-            url licenseUrl
-            distribution "repo"
-        }
-    }
-    developers {
-        developer {
-            id developerId
-            name developerName
-            email developerEmail
-        }
-    }
-    scm {
-        url gitUrl
-    }
-}
-
+apply from: 'https://raw.githubusercontent.com/kostasdrakonakis/maven-upload/master/pomconfig.gradle'
 // Get the artifacts
 artifacts {
     archives javadocJar
@@ -108,74 +46,21 @@ publishing {
             groupId publishedGroupId
             artifactId "android-navigator-compiler"
             version libraryVersion
+            from components.java
             pom.withXml {
-                def dependenciesNode = asNode().appendNode('dependencies')
-                getDependencies(configurations.compile, dependenciesNode)
-                getDependencies(configurations.api, dependenciesNode)
-                getDependencies(configurations.implementation, dependenciesNode)
                 def root = asNode()
+                NodeList packagingNodeList = root.get('packaging')
+                if (!packagingNodeList.isEmpty()) {
+                    def packagingNode = packagingNodeList.get(0)
+                    packagingNode.setValue(packagingType)
+                } else {
+                    root.appendNode('packaging', packagingType)
+                }
                 root.appendNode('description', libraryDescription)
                 root.appendNode('name', libraryName)
                 root.appendNode('url', siteUrl)
-                root.children().last() + pomConfig
+                root.children().last() + pomConfiguration
             }
         }
     }
-}
-
-def getDependencies(config, dependenciesNode) {
-    config.allDependencies.each {
-        if (it.group != null && it.name != null) {
-            if (!hasExistingNode(dependenciesNode, it)) {
-                def dependencyNode = dependenciesNode.appendNode('dependency')
-                dependencyNode.appendNode('groupId', it.group)
-                dependencyNode.appendNode('artifactId', it.name)
-                dependencyNode.appendNode('version', it.version)
-                printAdd(it)
-                def exclusionsNode = dependencyNode.appendNode('exclusions')
-                if (it.excludeRules.size() > 0) {
-                    printAddExclusions(it)
-                    it.excludeRules.each { rule ->
-                        def exclusionNode = exclusionsNode.appendNode('exclusion')
-                        exclusionNode.appendNode('groupId', rule.group)
-                        if (rule.module != null) {
-                            exclusionNode.appendNode('artifactId', rule.module)
-                        }
-                    }
-                } else {
-                    dependencyNode.remove(exclusionsNode)
-                }
-            }
-        }
-    }
-    def dependenciesSize = config.allDependencies.size()
-    if (dependenciesSize > 0) {
-        println "Added Dependencies for configuration: ${config.getName()}"
-        println "Dependencies size: ${dependenciesNode.children().size()}"
-    } else {
-        println "No dependencies found for configuration: ${config.getName()}"
-    }
-}
-
-boolean hasExistingNode(dependenciesNode, it) {
-    for (def item : dependenciesNode.children()) {
-        def itemGroupId = item.groupId[0].value()
-        def itemArtifactId = item.artifactId[0].value()
-        def itemVersion = item.version[0].value()
-        if (it.group == itemGroupId
-                && it.name == itemArtifactId
-                && it.version == itemVersion) {
-            return true
-        }
-    }
-
-    return false
-}
-
-def printAdd(it) {
-    println "Added dependency: '${it.group}:${it.name}:${it.version}'"
-}
-
-def printAddExclusions(it) {
-    println "Added exclusions for: '${it.group}:${it.name}:${it.version}'"
 }
