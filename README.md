@@ -13,20 +13,20 @@ Download the latest JAR or grab via Maven:
 <dependency>
   <groupId>com.github.kostasdrakonakis</groupId>
   <artifactId>android-navigator</artifactId>
-  <version>1.2.5</version>
+  <version>1.2.6</version>
 </dependency>
 ````
 ```xml
 <dependency>
   <groupId>com.github.kostasdrakonakis</groupId>
   <artifactId>android-navigator-compiler</artifactId>
-  <version>1.2.5</version>
+  <version>1.2.6</version>
 </dependency>
 ```
 or Gradle:
 ```groovy
-implementation 'com.github.kostasdrakonakis:android-navigator:1.2.5'
-annotationProcessor 'com.github.kostasdrakonakis:android-navigator-compiler:1.2.5'
+implementation 'com.github.kostasdrakonakis:android-navigator:1.2.6'
+annotationProcessor 'com.github.kostasdrakonakis:android-navigator-compiler:1.2.6'
 ```
 
 Usage
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
 	@IntentProperty("name")
 	String name;
 	@IntentProperty("title")
-	public String title;
+	String title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -190,6 +190,10 @@ public enum IntentType {
 
 CHANGELOG
 ----
+**v1.2.6**:
+* Convert project to Kotlin
+* Fixed some issue with generation
+
 **v1.2.5**:
 * Add Javadoc in Annotations
 

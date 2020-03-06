@@ -1,6 +1,6 @@
 apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 29
@@ -26,12 +26,18 @@ android {
 
 apply from: 'https://raw.githubusercontent.com/kostasdrakonakis/maven-upload/master/bintray.gradle'
 apply from: 'https://raw.githubusercontent.com/kostasdrakonakis/maven-upload/master/publications.gradle'
+tasks.withType(Javadoc) {
+    failOnError false
+    options.addStringOption('Xdoclint:none', '-quiet')
+    options.addStringOption('encoding', 'UTF-8')
+    options.addStringOption('charSet', 'UTF-8')
+}
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.annotation:annotation:1.1.0'
-//    api 'com.github.kostasdrakonakis:android-navigator-annotations:1.2.5'
-//    androidTestAnnotationProcessor 'com.github.kostasdrakonakis:android-navigator-compiler:1.2.5'
+//    api 'com.github.kostasdrakonakis:android-navigator-annotations:1.2.6'
+//    androidTestAnnotationProcessor 'com.github.kostasdrakonakis:android-navigator-compiler:1.2.6'
     api project(':android-navigator-annotations')
     androidTestAnnotationProcessor project(':android-navigator-compiler')
     implementation "androidx.core:core-ktx:1.2.0"

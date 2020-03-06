@@ -27,8 +27,8 @@ android {
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.core:core-ktx:1.2.0'
-//    implementation 'com.github.kostasdrakonakis:android-navigator:1.2.5'
-//    annotationProcessor 'com.github.kostasdrakonakis:android-navigator-compiler:1.2.5'
+//    implementation 'com.github.kostasdrakonakis:android-navigator:1.2.6'
+//    kapt 'com.github.kostasdrakonakis:android-navigator-compiler:1.2.6'
     implementation project(':android-navigator')
     kapt project(':android-navigator-compiler')
 }

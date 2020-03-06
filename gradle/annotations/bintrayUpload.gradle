@@ -5,7 +5,7 @@ apply plugin: 'com.jfrog.bintray'
 bintray {
     user = bintrayUser
     key = bintrayApiKey
-    publications = ['MyPublication']
+    publications = ['Annotations']
     configurations = ['archives']
     pkg {
         repo = bintrayRepo
@@ -39,10 +39,9 @@ artifacts {
 // Create the publication with the pom configuration:
 publishing {
     publications {
-        MyPublication(MavenPublication) {
+        Annotations(MavenPublication) {
             artifact sourcesJar
             artifact javadocJar
-            artifact("$buildDir/libs/${project.getName()}-${version}.jar")
             groupId publishedGroupId
             artifactId "android-navigator-annotations"
             version libraryVersion
