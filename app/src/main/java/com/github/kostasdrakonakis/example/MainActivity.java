@@ -22,7 +22,11 @@ import static android.text.TextUtils.isEmpty;
         @IntentExtra(type = IntentType.INT, parameter = "id"),
         @IntentExtra(type = IntentType.STRING, parameter = "name"),
         @IntentExtra(type = IntentType.CHAR, parameter = "mine"),
-        @IntentExtra(type = IntentType.STRING, parameter = "title")
+        @IntentExtra(type = IntentType.STRING, parameter = "title"),
+        @IntentExtra(type = IntentType.LONG, parameter = "oneLong"),
+        @IntentExtra(type = IntentType.BOOLEAN, parameter = "aBoolean"),
+        @IntentExtra(type = IntentType.DOUBLE, parameter = "aDouble"),
+        @IntentExtra(type = IntentType.FLOAT, parameter = "singleFloat")
 }, categories = {
         @IntentCategory(IntentCategoryType.CATEGORY_DEFAULT)
 }, flags = {
@@ -39,6 +43,14 @@ public class MainActivity extends AppCompatActivity {
     public String title;
     @IntentProperty("mine")
     public char myChar;
+    @IntentProperty("oneLong")
+    public long oneLong;
+    @IntentProperty("aBoolean")
+    public boolean aBoolean;
+    @IntentProperty("aDouble")
+    public double aDouble;
+    @IntentProperty("singleFloat")
+    public float singleFloat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

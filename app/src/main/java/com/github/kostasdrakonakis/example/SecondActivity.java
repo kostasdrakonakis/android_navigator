@@ -19,7 +19,7 @@ public class SecondActivity extends AppCompatActivity {
         intent.addCategory("1");
         findViewById(R.id.second_text).setOnClickListener(v -> {
             char ch = 'a';
-            IntentNavigator.startMainActivity(SecondActivity.this, 2, "Hello", ch, "Nope");
+            IntentNavigator.startMainActivity(SecondActivity.this, 2, "Hello", ch, "Nope", 1L, false, 10.0, 4F);
         });
     }
 }
