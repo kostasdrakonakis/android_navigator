@@ -15,4 +15,7 @@ dependencies {
     kapt 'net.ltgt.gradle.incap:incap-processor:0.2'
     //implementation 'com.github.kostasdrakonakis:android-navigator-annotations:1.2.6'
     implementation project(':android-navigator-annotations')
+    testImplementation 'junit:junit:4.13'
+    testImplementation 'com.google.truth:truth:1.0.1'
+    testImplementation 'com.google.testing.compile:compile-testing:0.18'
 }
