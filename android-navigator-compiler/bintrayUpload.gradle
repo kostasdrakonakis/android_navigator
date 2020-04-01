@@ -1,0 +1,65 @@
+if (deployProject == "true") {
+    apply plugin: 'maven'
+    apply plugin: 'maven-publish'
+    apply plugin: 'com.jfrog.bintray'
+
+    ext.set("publishCompiler", true)
+    bintray {
+        user = bintrayUser
+        key = bintrayApiKey
+        publications = ['Compiler']
+        configurations = ['archives']
+        pkg {
+            repo = bintrayRepo
+            name = "android-navigator-compiler"
+            desc = libraryDescription
+            websiteUrl = siteUrl
+            vcsUrl = gitUrl
+            licenses = allLicenses
+            publish = true
+            publicDownloadNumbers = true
+            version {
+                desc = libraryDescription
+                gpg {
+                    sign = true //Determines whether to GPG sign the files. The default is false
+                    passphrase = bintrayGPGPassword
+                    //Optional. The passphrase for GPG signing'
+                }
+            }
+        }
+    }
+
+    apply from: 'https://raw.githubusercontent.com/kostasdrakonakis/maven-upload/master/pomconfig.gradle'
+// Get the artifacts
+    artifacts {
+        archives javadocJar
+        archives sourcesJar
+    }
+
+// Create the publication with the pom configuration:
+    publishing {
+        publications {
+            Compiler(MavenPublication) {
+                artifact sourcesJar
+                artifact javadocJar
+                groupId publishedGroupId
+                artifactId "android-navigator-compiler"
+                from components.java
+                pom.withXml {
+                    def root = asNode()
+                    NodeList packagingNodeList = root.get('packaging')
+                    if (!packagingNodeList.isEmpty()) {
+                        def packagingNode = packagingNodeList.get(0)
+                        packagingNode.setValue(packagingType)
+                    } else {
+                        root.appendNode('packaging', packagingType)
+                    }
+                    root.appendNode('description', libraryDescription)
+                    root.appendNode('name', libraryName)
+                    root.appendNode('url', siteUrl)
+                    root.children().last() + pomConfiguration
+                }
+            }
+        }
+    }
+}

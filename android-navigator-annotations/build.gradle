@@ -1,3 +1,2 @@
 apply plugin: 'java-library'
-
-apply from: '../gradle/annotations/bintrayUpload.gradle'
+apply from: 'bintrayUpload.gradle'

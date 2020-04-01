@@ -6,12 +6,11 @@ import androidx.annotation.CheckResult
 import androidx.annotation.UiThread
 import java.lang.reflect.Constructor
 import java.lang.reflect.InvocationTargetException
-import java.util.LinkedHashMap
 
 object IntentNavigatorBinder {
     private val TAG = IntentNavigatorBinder::class.java.simpleName
     private var debug = false
-    private val CONSTRUCTOR_MAP: MutableMap<Class<*>, Constructor<*>> = LinkedHashMap()
+    private val CONSTRUCTOR_MAP: MutableMap<Class<*>, Constructor<*>> = linkedMapOf()
 
     @JvmStatic
     @UiThread
