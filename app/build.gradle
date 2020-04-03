@@ -30,5 +30,6 @@ dependencies {
 //    implementation 'com.github.kostasdrakonakis:android-navigator:1.2.6'
 //    kapt 'com.github.kostasdrakonakis:android-navigator-compiler:1.2.6'
     implementation project(':android-navigator')
+    implementation project(':android-navigator-annotations')
     kapt project(':android-navigator-compiler')
 }
