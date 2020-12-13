@@ -1,63 +1,60 @@
-if (deployProject == "true") {
-    apply plugin: 'maven'
-    apply plugin: 'maven-publish'
-    apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
 
-    bintray {
-        user = bintrayUser
-        key = bintrayApiKey
-        publications = ['Annotations']
-        configurations = ['archives']
-        pkg {
-            repo = bintrayRepo
-            name = "android-navigator-annotations"
+bintray {
+    user = bintrayUser
+    key = bintrayApiKey
+    publications = ['Annotations']
+    configurations = ['archives']
+    pkg {
+        repo = bintrayRepo
+        name = "android-navigator-annotations"
+        desc = libraryDescription
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = allLicenses
+        publish = true
+        publicDownloadNumbers = true
+        version {
             desc = libraryDescription
-            websiteUrl = siteUrl
-            vcsUrl = gitUrl
-            licenses = allLicenses
-            publish = true
-            publicDownloadNumbers = true
-            version {
-                desc = libraryDescription
-                gpg {
-                    sign = true
-                    passphrase = bintrayGPGPassword
-                }
+            gpg {
+                sign = true
+                passphrase = bintrayGPGPassword
             }
         }
     }
+}
 
-    apply from: 'https://raw.githubusercontent.com/kostasdrakonakis/maven-upload/master/pomconfig.gradle'
+apply from: 'https://raw.githubusercontent.com/kostasdrakonakis/maven-upload/master/pomconfig.gradle'
 
 // Get the artifacts
-    artifacts {
-        archives javadocJar
-        archives sourcesJar
-    }
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
 
 // Create the publication with the pom configuration:
-    publishing {
-        publications {
-            Annotations(MavenPublication) {
-                artifact sourcesJar
-                artifact javadocJar
-                groupId publishedGroupId
-                artifactId "android-navigator-annotations"
-                from components.java
-                pom.withXml {
-                    def root = asNode()
-                    NodeList packagingNodeList = root.get('packaging')
-                    if (!packagingNodeList.isEmpty()) {
-                        def packagingNode = packagingNodeList.get(0)
-                        packagingNode.setValue(packagingType)
-                    } else {
-                        root.appendNode('packaging', packagingType)
-                    }
-                    root.appendNode('description', libraryDescription)
-                    root.appendNode('name', libraryName)
-                    root.appendNode('url', siteUrl)
-                    root.children().last() + pomConfiguration
+publishing {
+    publications {
+        Annotations(MavenPublication) {
+            artifact sourcesJar
+            artifact javadocJar
+            groupId publishedGroupId
+            artifactId "android-navigator-annotations"
+            from components.java
+            pom.withXml {
+                def root = asNode()
+                NodeList packagingNodeList = root.get('packaging')
+                if (!packagingNodeList.isEmpty()) {
+                    def packagingNode = packagingNodeList.get(0)
+                    packagingNode.setValue(packagingType)
+                } else {
+                    root.appendNode('packaging', packagingType)
                 }
+                root.appendNode('description', libraryDescription)
+                root.appendNode('name', libraryName)
+                root.appendNode('url', siteUrl)
+                root.children().last() + pomConfiguration
             }
         }
     }
