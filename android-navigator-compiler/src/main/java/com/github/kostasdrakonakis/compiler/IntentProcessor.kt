@@ -72,12 +72,13 @@ class IntentProcessor : AbstractProcessor() {
         generateIntentPropertiesFile()
         if (roundEnv.processingOver()) {
             try {
-                JavaFile.builder(Constants.PACKAGE_NAME, navigatorClass.build()).build().writeTo(filer)
+                JavaFile.builder(Constants.PACKAGE_NAME, navigatorClass.build()).build()
+                    .writeTo(filer)
                 for (intentPropertyFile in intentPropertyFiles) {
                     intentPropertyFile.writeTo(filer)
                 }
-            } catch (ex: FilerException) {
-            } catch (e: IOException) {
+            } catch (_: FilerException) {
+            } catch (_: IOException) {
             }
         }
         return false
@@ -105,11 +106,13 @@ class IntentProcessor : AbstractProcessor() {
             val intent = element.getAnnotation(Intent::class.java)
             val activity = typeElement.simpleName.toString()
             val packageName = elements.getPackageOf(typeElement).qualifiedName.toString()
-            activitiesMap[activity] = IntentData(intent.value,
+            activitiesMap[activity] = IntentData(
+                intent.value,
                 intent.flags,
                 intent.categories,
                 intent.type,
-                packageName)
+                packageName
+            )
         }
         return false
     }
@@ -134,12 +137,14 @@ class IntentProcessor : AbstractProcessor() {
                 error("IntentService annotation must be used in Service class")
                 return true
             }
-            servicesMap[service] = IntentServiceData(intentService.extras,
+            servicesMap[service] = IntentServiceData(
+                intentService.extras,
                 intentService.flags,
                 intentService.categories,
                 intentService.type,
                 packageName,
-                intentService.value)
+                intentService.value
+            )
         }
         return false
     }
@@ -157,14 +162,16 @@ class IntentProcessor : AbstractProcessor() {
             val modifiers = element.modifiers
             if (modifiers.contains(Modifier.PRIVATE)
                 || modifiers.contains(Modifier.FINAL)
-                || modifiers.contains(Modifier.NATIVE)) {
+                || modifiers.contains(Modifier.NATIVE)
+            ) {
                 error("@IntentProperty must be applied to public, protected, package-private fields only.")
                 return true
             }
             val intentProperty = element.getAnnotation(IntentProperty::class.java)
             val activity = typeElement.simpleName.toString()
             val packageName = elements.getPackageOf(typeElement).qualifiedName.toString()
-            val intentPropertyData = IntentPropertyData(fieldName, intentProperty.value, returnTypeString)
+            val intentPropertyData =
+                IntentPropertyData(fieldName, intentProperty.value, returnTypeString)
             for (elementMirror in element.annotationMirrors) {
                 val map = elementMirror.elementValues
                 val shouldCheckValue = map.keys.size > 1
@@ -283,21 +290,27 @@ class IntentProcessor : AbstractProcessor() {
                 .returns(TypeName.VOID)
                 .addParameter(Constants.CONTEXT, "context")
             if (values.isNotEmpty() || flags.isNotEmpty() || categories.isNotEmpty() || intentType.isNotEmpty()) {
-                builder.addStatement(Constants.NEW_INTENT_STATEMENT,
+                builder.addStatement(
+                    Constants.NEW_INTENT_STATEMENT,
                     Constants.INTENT_CLASS,
-                    "context", "$activityClass.class")
+                    "context", "$activityClass.class"
+                )
                 if (flags.isNotEmpty()) {
                     for (data in flags) {
-                        builder.addStatement(Constants.INTENT_ADD_FLAGS
-                            + data.flag
-                            + Constants.CLOSING_BRACKET)
+                        builder.addStatement(
+                            Constants.INTENT_ADD_FLAGS
+                                    + data.flag
+                                    + Constants.CLOSING_BRACKET
+                        )
                     }
                 }
                 if (categories.isNotEmpty()) {
                     for (data in categories) {
-                        builder.addStatement(Constants.INTENT_ADD_CATEGORY
-                            + data.category
-                            + Constants.CLOSING_BRACKET)
+                        builder.addStatement(
+                            Constants.INTENT_ADD_CATEGORY
+                                    + data.category
+                                    + Constants.CLOSING_BRACKET
+                        )
                     }
                 }
                 if (values.isNotEmpty()) {
@@ -305,8 +318,8 @@ class IntentProcessor : AbstractProcessor() {
                         val type = data.type
                         val parameter = data.parameter
                         val constName = ("EXTRA_"
-                            + activityName.toUpperCase(Locale.getDefault())
-                            + "_" + parameter.toUpperCase(Locale.getDefault()))
+                                + activityName.uppercase(Locale.getDefault())
+                                + "_" + parameter.uppercase(Locale.getDefault()))
                         extraDataMap[parameter] = constName
                         val fieldSpec = FieldSpec.builder(String::class.java, constName)
                             .addModifiers(Modifier.PUBLIC, Modifier.FINAL, Modifier.STATIC)
@@ -326,11 +339,13 @@ class IntentProcessor : AbstractProcessor() {
                                 builder.addParameter(cls, parameter)
                             }
                         }
-                        builder.addStatement(Constants.INTENT_PUT_EXTRA
-                            + constName
-                            + Constants.COMMA_SEPARATION
-                            + parameter
-                            + Constants.CLOSING_BRACKET)
+                        builder.addStatement(
+                            Constants.INTENT_PUT_EXTRA
+                                    + constName
+                                    + Constants.COMMA_SEPARATION
+                                    + parameter
+                                    + Constants.CLOSING_BRACKET
+                        )
                     }
                 }
                 if (intentType.isNotEmpty()) {
@@ -338,9 +353,11 @@ class IntentProcessor : AbstractProcessor() {
                 }
                 builder.addStatement(Constants.START_ACTIVITY_INTENT)
             } else {
-                builder.addStatement(Constants.START_ACTIVITY_NEW_INTENT,
+                builder.addStatement(
+                    Constants.START_ACTIVITY_NEW_INTENT,
                     Constants.INTENT_CLASS,
-                    "context", activityClass.toString() + Constants.CLASS)
+                    "context", activityClass.toString() + Constants.CLASS
+                )
             }
             val intentMethod = builder.build()
             navigatorClass.addMethod(intentMethod)
@@ -365,19 +382,24 @@ class IntentProcessor : AbstractProcessor() {
                 builder.addStatement(
                     Constants.NEW_INTENT_STATEMENT,
                     Constants.INTENT_CLASS,
-                    "context", "$serviceClass.class")
+                    "context", "$serviceClass.class"
+                )
                 if (flags.isNotEmpty()) {
                     for (data in flags) {
-                        builder.addStatement(Constants.INTENT_ADD_FLAGS
-                            + data.flag
-                            + Constants.CLOSING_BRACKET)
+                        builder.addStatement(
+                            Constants.INTENT_ADD_FLAGS
+                                    + data.flag
+                                    + Constants.CLOSING_BRACKET
+                        )
                     }
                 }
                 if (categories.isNotEmpty()) {
                     for (data in categories) {
-                        builder.addStatement(Constants.INTENT_ADD_CATEGORY
-                            + data.category
-                            + Constants.CLOSING_BRACKET)
+                        builder.addStatement(
+                            Constants.INTENT_ADD_CATEGORY
+                                    + data.category
+                                    + Constants.CLOSING_BRACKET
+                        )
                     }
                 }
                 if (values.isNotEmpty()) {
@@ -385,8 +407,8 @@ class IntentProcessor : AbstractProcessor() {
                         val type = data.type
                         val parameter = data.parameter
                         val constName = ("EXTRA_"
-                            + serviceName.toUpperCase(Locale.getDefault())
-                            + "_" + parameter.toUpperCase(Locale.getDefault()))
+                                + serviceName.uppercase(Locale.getDefault())
+                                + "_" + parameter.uppercase(Locale.getDefault()))
                         extraDataMap[parameter] = constName
                         val fieldSpec = FieldSpec.builder(String::class.java, constName)
                             .addModifiers(Modifier.PUBLIC, Modifier.FINAL, Modifier.STATIC)
@@ -395,18 +417,23 @@ class IntentProcessor : AbstractProcessor() {
                         navigatorClass.addField(fieldSpec)
                         when (type) {
                             IntentType.BUNDLE -> builder.addParameter(Constants.BUNDLE, parameter)
-                            IntentType.PARCELABLE -> builder.addParameter(Constants.PARCELABLE, parameter)
+                            IntentType.PARCELABLE -> builder.addParameter(
+                                Constants.PARCELABLE,
+                                parameter
+                            )
                             else -> {
                                 val cls = ClassHelper.getClassFromType(type)
                                     ?: throw java.lang.IllegalArgumentException("Unknown type: $type")
                                 builder.addParameter(cls, parameter)
                             }
                         }
-                        builder.addStatement(Constants.INTENT_PUT_EXTRA
-                            + constName
-                            + Constants.COMMA_SEPARATION
-                            + parameter
-                            + Constants.CLOSING_BRACKET)
+                        builder.addStatement(
+                            Constants.INTENT_PUT_EXTRA
+                                    + constName
+                                    + Constants.COMMA_SEPARATION
+                                    + parameter
+                                    + Constants.CLOSING_BRACKET
+                        )
                     }
                 }
                 if (intentType.isNotEmpty()) {
@@ -420,12 +447,16 @@ class IntentProcessor : AbstractProcessor() {
                 }
             } else {
                 when (serviceType) {
-                    ServiceType.FOREGROUND -> builder.addStatement(Constants.START_FOREGROUND_SERVICE_NEW_INTENT,
+                    ServiceType.FOREGROUND -> builder.addStatement(
+                        Constants.START_FOREGROUND_SERVICE_NEW_INTENT,
                         Constants.INTENT_CLASS,
-                        "context", serviceClass.toString() + Constants.CLASS)
-                    ServiceType.BACKGROUND -> builder.addStatement(Constants.START_SERVICE_NEW_INTENT,
+                        "context", serviceClass.toString() + Constants.CLASS
+                    )
+                    ServiceType.BACKGROUND -> builder.addStatement(
+                        Constants.START_SERVICE_NEW_INTENT,
                         Constants.INTENT_CLASS,
-                        "context", serviceClass.toString() + Constants.CLASS)
+                        "context", serviceClass.toString() + Constants.CLASS
+                    )
                     else -> {
                     }
                 }
@@ -453,7 +484,8 @@ class IntentProcessor : AbstractProcessor() {
                 val item = extraDataMap[parameterName]
                 when (fieldClass) {
                     Constants.BUNDLE_FIELD -> {
-                        activityConstructor.addStatement("\$N.\$N = \$N.\$N().\$N(\$T.\$N)",
+                        activityConstructor.addStatement(
+                            "\$N.\$N = \$N.\$N().\$N(\$T.\$N)",
                             Constants.ACTIVITY_FIELD,
                             fieldName,
                             Constants.ACTIVITY_FIELD,
@@ -464,7 +496,8 @@ class IntentProcessor : AbstractProcessor() {
                         )
                     }
                     Constants.PARCELABLE_FIELD -> {
-                        activityConstructor.addStatement("\$N.\$N = \$N.\$N().\$N(\$T.\$N)",
+                        activityConstructor.addStatement(
+                            "\$N.\$N = \$N.\$N().\$N(\$T.\$N)",
                             Constants.ACTIVITY_FIELD,
                             fieldName,
                             Constants.ACTIVITY_FIELD,
@@ -477,7 +510,8 @@ class IntentProcessor : AbstractProcessor() {
                     else -> {
                         when (fieldClass) {
                             String::class.java.name -> {
-                                activityConstructor.addStatement("\$N.\$N = \$N.\$N().getStringExtra(\$T.\$N)",
+                                activityConstructor.addStatement(
+                                    "\$N.\$N = \$N.\$N().getStringExtra(\$T.\$N)",
                                     Constants.ACTIVITY_FIELD,
                                     fieldName,
                                     Constants.ACTIVITY_FIELD,
@@ -487,7 +521,8 @@ class IntentProcessor : AbstractProcessor() {
                                 )
                             }
                             Int::class.javaPrimitiveType?.name -> {
-                                activityConstructor.addStatement("\$N.\$N = \$N.\$N().getIntExtra(\$T.\$N, \$L)",
+                                activityConstructor.addStatement(
+                                    "\$N.\$N = \$N.\$N().getIntExtra(\$T.\$N, \$L)",
                                     Constants.ACTIVITY_FIELD,
                                     fieldName,
                                     Constants.ACTIVITY_FIELD,
@@ -498,7 +533,8 @@ class IntentProcessor : AbstractProcessor() {
                                 )
                             }
                             Boolean::class.javaPrimitiveType?.name -> {
-                                activityConstructor.addStatement("\$N.\$N = \$N.\$N().getBooleanExtra(\$T.\$N, \$L)",
+                                activityConstructor.addStatement(
+                                    "\$N.\$N = \$N.\$N().getBooleanExtra(\$T.\$N, \$L)",
                                     Constants.ACTIVITY_FIELD,
                                     fieldName,
                                     Constants.ACTIVITY_FIELD,
@@ -509,7 +545,8 @@ class IntentProcessor : AbstractProcessor() {
                                 )
                             }
                             Byte::class.javaPrimitiveType?.name -> {
-                                activityConstructor.addStatement("\$N.\$N = \$N.\$N().getByteExtra(\$T.\$N, \$L)",
+                                activityConstructor.addStatement(
+                                    "\$N.\$N = \$N.\$N().getByteExtra(\$T.\$N, \$L)",
                                     Constants.ACTIVITY_FIELD,
                                     fieldName,
                                     Constants.ACTIVITY_FIELD,
@@ -520,7 +557,8 @@ class IntentProcessor : AbstractProcessor() {
                                 )
                             }
                             Short::class.javaPrimitiveType?.name -> {
-                                activityConstructor.addStatement("\$N.\$N = \$N.\$N().getShortExtra(\$T.\$N, \$L)",
+                                activityConstructor.addStatement(
+                                    "\$N.\$N = \$N.\$N().getShortExtra(\$T.\$N, \$L)",
                                     Constants.ACTIVITY_FIELD,
                                     fieldName,
                                     Constants.ACTIVITY_FIELD,
@@ -531,7 +569,8 @@ class IntentProcessor : AbstractProcessor() {
                                 )
                             }
                             Long::class.javaPrimitiveType?.name -> {
-                                activityConstructor.addStatement("\$N.\$N = \$N.\$N().getLongExtra(\$T.\$N, \$LL)",
+                                activityConstructor.addStatement(
+                                    "\$N.\$N = \$N.\$N().getLongExtra(\$T.\$N, \$LL)",
                                     Constants.ACTIVITY_FIELD,
                                     fieldName,
                                     Constants.ACTIVITY_FIELD,
@@ -542,7 +581,8 @@ class IntentProcessor : AbstractProcessor() {
                                 )
                             }
                             Char::class.javaPrimitiveType?.name -> {
-                                activityConstructor.addStatement("\$N.\$N = \$N.\$N().getCharExtra(\$T.\$N, \'\$L\')",
+                                activityConstructor.addStatement(
+                                    "\$N.\$N = \$N.\$N().getCharExtra(\$T.\$N, \'\$L\')",
                                     Constants.ACTIVITY_FIELD,
                                     fieldName,
                                     Constants.ACTIVITY_FIELD,
@@ -553,7 +593,8 @@ class IntentProcessor : AbstractProcessor() {
                                 )
                             }
                             Float::class.javaPrimitiveType?.name -> {
-                                activityConstructor.addStatement("\$N.\$N = \$N.\$N().getFloatExtra(\$T.\$N, \$Lf)",
+                                activityConstructor.addStatement(
+                                    "\$N.\$N = \$N.\$N().getFloatExtra(\$T.\$N, \$Lf)",
                                     Constants.ACTIVITY_FIELD,
                                     fieldName,
                                     Constants.ACTIVITY_FIELD,
@@ -564,7 +605,8 @@ class IntentProcessor : AbstractProcessor() {
                                 )
                             }
                             Double::class.javaPrimitiveType?.name -> {
-                                activityConstructor.addStatement("\$N.\$N = \$N.\$N().getDoubleExtra(\$T.\$N, \$Ld)",
+                                activityConstructor.addStatement(
+                                    "\$N.\$N = \$N.\$N().getDoubleExtra(\$T.\$N, \$Ld)",
                                     Constants.ACTIVITY_FIELD,
                                     fieldName,
                                     Constants.ACTIVITY_FIELD,
@@ -575,7 +617,8 @@ class IntentProcessor : AbstractProcessor() {
                                 )
                             }
                             BooleanArray::class.java.name -> {
-                                activityConstructor.addStatement("\$N.\$N = \$N.\$N().getBooleanArrayExtra(\$T.\$N)",
+                                activityConstructor.addStatement(
+                                    "\$N.\$N = \$N.\$N().getBooleanArrayExtra(\$T.\$N)",
                                     Constants.ACTIVITY_FIELD,
                                     fieldName,
                                     Constants.ACTIVITY_FIELD,
@@ -585,7 +628,8 @@ class IntentProcessor : AbstractProcessor() {
                                 )
                             }
                             ByteArray::class.java.name -> {
-                                activityConstructor.addStatement("\$N.\$N = \$N.\$N().getByteArrayExtra(\$T.\$N)",
+                                activityConstructor.addStatement(
+                                    "\$N.\$N = \$N.\$N().getByteArrayExtra(\$T.\$N)",
                                     Constants.ACTIVITY_FIELD,
                                     fieldName,
                                     Constants.ACTIVITY_FIELD,
@@ -595,7 +639,8 @@ class IntentProcessor : AbstractProcessor() {
                                 )
                             }
                             CharArray::class.java.name -> {
-                                activityConstructor.addStatement("\$N.\$N = \$N.\$N().getCharArrayExtra(\$T.\$N)",
+                                activityConstructor.addStatement(
+                                    "\$N.\$N = \$N.\$N().getCharArrayExtra(\$T.\$N)",
                                     Constants.ACTIVITY_FIELD,
                                     fieldName,
                                     Constants.ACTIVITY_FIELD,
@@ -605,7 +650,8 @@ class IntentProcessor : AbstractProcessor() {
                                 )
                             }
                             Array<CharSequence>::class.java.name -> {
-                                activityConstructor.addStatement("\$N.\$N = \$N.\$N().getCharSequenceArrayExtra(\$T.\$N)",
+                                activityConstructor.addStatement(
+                                    "\$N.\$N = \$N.\$N().getCharSequenceArrayExtra(\$T.\$N)",
                                     Constants.ACTIVITY_FIELD,
                                     fieldName,
                                     Constants.ACTIVITY_FIELD,
@@ -615,7 +661,8 @@ class IntentProcessor : AbstractProcessor() {
                                 )
                             }
                             CharSequence::class.java.name -> {
-                                activityConstructor.addStatement("\$N.\$N = \$N.\$N().getCharSequenceExtra(\$T.\$N)",
+                                activityConstructor.addStatement(
+                                    "\$N.\$N = \$N.\$N().getCharSequenceExtra(\$T.\$N)",
                                     Constants.ACTIVITY_FIELD,
                                     fieldName,
                                     Constants.ACTIVITY_FIELD,
@@ -625,7 +672,8 @@ class IntentProcessor : AbstractProcessor() {
                                 )
                             }
                             LongArray::class.java.name -> {
-                                activityConstructor.addStatement("\$N.\$N = \$N.\$N().getLongArrayExtra(\$T.\$N)",
+                                activityConstructor.addStatement(
+                                    "\$N.\$N = \$N.\$N().getLongArrayExtra(\$T.\$N)",
                                     Constants.ACTIVITY_FIELD,
                                     fieldName,
                                     Constants.ACTIVITY_FIELD,
@@ -635,7 +683,8 @@ class IntentProcessor : AbstractProcessor() {
                                 )
                             }
                             IntArray::class.java.name -> {
-                                activityConstructor.addStatement("\$N.\$N = \$N.\$N().getIntArrayExtra(\$T.\$N)",
+                                activityConstructor.addStatement(
+                                    "\$N.\$N = \$N.\$N().getIntArrayExtra(\$T.\$N)",
                                     Constants.ACTIVITY_FIELD,
                                     fieldName,
                                     Constants.ACTIVITY_FIELD,
@@ -645,7 +694,8 @@ class IntentProcessor : AbstractProcessor() {
                                 )
                             }
                             Array<String>::class.java.name -> {
-                                activityConstructor.addStatement("\$N.\$N = \$N.\$N().getStringArrayExtra(\$T.\$N)",
+                                activityConstructor.addStatement(
+                                    "\$N.\$N = \$N.\$N().getStringArrayExtra(\$T.\$N)",
                                     Constants.ACTIVITY_FIELD,
                                     fieldName,
                                     Constants.ACTIVITY_FIELD,
@@ -655,7 +705,8 @@ class IntentProcessor : AbstractProcessor() {
                                 )
                             }
                             ShortArray::class.java.name -> {
-                                activityConstructor.addStatement("\$N.\$N = \$N.\$N().getShortArrayExtra(\$T.\$N)",
+                                activityConstructor.addStatement(
+                                    "\$N.\$N = \$N.\$N().getShortArrayExtra(\$T.\$N)",
                                     Constants.ACTIVITY_FIELD,
                                     fieldName,
                                     Constants.ACTIVITY_FIELD,
@@ -665,7 +716,8 @@ class IntentProcessor : AbstractProcessor() {
                                 )
                             }
                             Serializable::class.java.name -> {
-                                activityConstructor.addStatement("\$N.\$N = \$N.\$N().getSerializableExtra(\$T.\$N)",
+                                activityConstructor.addStatement(
+                                    "\$N.\$N = \$N.\$N().getSerializableExtra(\$T.\$N)",
                                     Constants.ACTIVITY_FIELD,
                                     fieldName,
                                     Constants.ACTIVITY_FIELD,

@@ -1,2 +1,5 @@
 apply plugin: 'java-library'
-apply from: 'bintrayUpload.gradle'
+java {
+    sourceCompatibility = JavaVersion.VERSION_16
+    targetCompatibility = JavaVersion.VERSION_16
+}

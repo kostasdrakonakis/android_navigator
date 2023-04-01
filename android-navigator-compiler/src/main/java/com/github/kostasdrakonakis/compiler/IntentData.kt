@@ -5,11 +5,13 @@ import com.github.kostasdrakonakis.annotation.IntentExtra
 import com.github.kostasdrakonakis.annotation.IntentFlag
 import java.util.ArrayList
 
-internal open class IntentData(values: Array<IntentExtra>,
-                               flags: Array<IntentFlag>,
-                               categories: Array<IntentCategory>,
-                               type: String,
-                               packageName: String) {
+internal open class IntentData(
+    values: Array<IntentExtra>,
+    flags: Array<IntentFlag>,
+    categories: Array<IntentCategory>,
+    type: String,
+    packageName: String
+) {
     private val typeList: MutableList<IntentExtraData>
     private val flagList: MutableList<IntentFlagData>
     private val categoryList: MutableList<IntentCategoryData>
