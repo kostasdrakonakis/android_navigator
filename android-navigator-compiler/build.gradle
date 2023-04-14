@@ -1,6 +1,7 @@
 apply plugin: 'java-library'
 apply plugin: 'kotlin'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'com.adarshr.test-logger'
 
 dependencies {
     implementation 'com.squareup:javapoet:1.13.0'
@@ -18,6 +19,6 @@ dependencies {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_16
-    targetCompatibility = JavaVersion.VERSION_16
+    sourceCompatibility = JavaVersion.VERSION_18
+    targetCompatibility = JavaVersion.VERSION_18
 }
