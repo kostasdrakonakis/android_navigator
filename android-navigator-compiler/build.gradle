@@ -9,7 +9,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     implementation 'com.google.guava:guava:32.0.1-jre'
     compileOnly 'com.google.auto.service:auto-service-annotations:1.1.1'
-    kapt 'com.google.auto.service:auto-service:1.1.0'
+    kapt 'com.google.auto.service:auto-service:1.1.1'
     compileOnly 'net.ltgt.gradle.incap:incap:1.0.0'
     kapt 'net.ltgt.gradle.incap:incap-processor:1.0.0'
     implementation project(':android-navigator-annotations')
