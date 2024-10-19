@@ -6,7 +6,7 @@ android {
     compileSdk 34
     defaultConfig {
         applicationId "com.github.kostasdrakonakis.example"
-        minSdkVersion 15
+        minSdkVersion 21
         targetSdkVersion 34
         versionCode 1
         versionName "1.0"
@@ -18,15 +18,18 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_18
-        targetCompatibility JavaVersion.VERSION_18
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
+    }
+    kotlin {
+        jvmToolchain(21)
     }
     namespace 'com.github.kostasdrakonakis.example'
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.core:core-ktx:1.13.1'
 //    implementation 'com.github.kostasdrakonakis:android-navigator:1.2.6'
 //    kapt 'com.github.kostasdrakonakis:android-navigator-compiler:1.2.6'
     implementation project(':android-navigator')
