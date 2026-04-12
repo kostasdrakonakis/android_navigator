@@ -46,6 +46,7 @@ class IntentProcessor : AbstractProcessor() {
     private val extraDataMap: MutableMap<String, String> = hashMapOf()
     private val fields: MutableList<IntentPropertyData> = arrayListOf()
     private val intentPropertyFiles: MutableList<JavaFile> = arrayListOf()
+    private var generatedSourcesWritten = false
 
     @Synchronized
     override fun init(processingEnvironment: ProcessingEnvironment) {
@@ -59,6 +60,9 @@ class IntentProcessor : AbstractProcessor() {
         if (parseIntentElements(roundEnv)) return true
         if (parseIntentServiceElements(roundEnv)) return true
         if (parseIntentPropertyElements(roundEnv)) return true
+        if (generatedSourcesWritten || roundEnv.processingOver() || hasNoInputs()) {
+            return false
+        }
         val navigatorClass = TypeSpec
             .classBuilder(Constants.GENERATED_CLASS_NAME)
             .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
@@ -69,19 +73,24 @@ class IntentProcessor : AbstractProcessor() {
         navigatorClass.addMethod(constructor)
         generateActivities(navigatorClass)
         generateServices(navigatorClass)
+        intentPropertyFiles.clear()
         generateIntentPropertiesFile()
-        if (roundEnv.processingOver()) {
-            try {
-                JavaFile.builder(Constants.PACKAGE_NAME, navigatorClass.build()).build()
-                    .writeTo(filer)
-                for (intentPropertyFile in intentPropertyFiles) {
-                    intentPropertyFile.writeTo(filer)
-                }
-            } catch (_: FilerException) {
-            } catch (_: IOException) {
+        try {
+            JavaFile.builder(Constants.PACKAGE_NAME, navigatorClass.build()).build()
+                .writeTo(filer)
+            for (intentPropertyFile in intentPropertyFiles) {
+                intentPropertyFile.writeTo(filer)
             }
+            generatedSourcesWritten = true
+        } catch (_: FilerException) {
+            generatedSourcesWritten = true
+        } catch (_: IOException) {
         }
         return false
+    }
+
+    private fun hasNoInputs(): Boolean {
+        return activitiesMap.isEmpty() && servicesMap.isEmpty() && intentPropertiesMap.isEmpty()
     }
 
     override fun getSupportedSourceVersion(): SourceVersion {
@@ -442,8 +451,6 @@ class IntentProcessor : AbstractProcessor() {
                 when (serviceType) {
                     ServiceType.FOREGROUND -> builder.addStatement(Constants.START_FOREGROUND_SERVICE_INTENT)
                     ServiceType.BACKGROUND -> builder.addStatement(Constants.START_SERVICE_INTENT)
-                    else -> {
-                    }
                 }
             } else {
                 when (serviceType) {
@@ -457,8 +464,6 @@ class IntentProcessor : AbstractProcessor() {
                         Constants.INTENT_CLASS,
                         "context", serviceClass.toString() + Constants.CLASS
                     )
-                    else -> {
-                    }
                 }
             }
             val intentMethod = builder.build()
