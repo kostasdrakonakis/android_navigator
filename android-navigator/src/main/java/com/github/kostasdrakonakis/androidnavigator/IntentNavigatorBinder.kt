@@ -18,10 +18,6 @@ object IntentNavigatorBinder {
         createBinder(activity)
     }
 
-    fun setDebug(debug: Boolean) {
-        this.debug = debug
-    }
-
     private fun createBinder(activity: Activity) {
         val targetClass: Class<*> = activity.javaClass
         try {
@@ -55,6 +51,7 @@ object IntentNavigatorBinder {
             bindingConstructor = bindingClass.getConstructor(cls)
             if (debug) Log.d(TAG, "Loaded binding class and constructor.")
         } catch (e: ClassNotFoundException) {
+            if (debug) Log.d(TAG, "Not found. Trying superclass " + cls.superclass!!.name + " for " + clsName + " because " + e.message)
             return null
         } catch (e: NoSuchMethodException) {
             throw RuntimeException("Unable to find binding constructor for $clsName", e)

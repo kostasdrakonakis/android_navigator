@@ -16,7 +16,7 @@ object TypeUtil {
         }
         val declaredType = typeMirror as DeclaredType
         val typeArguments = declaredType.typeArguments
-        if (typeArguments.size > 0) {
+        if (typeArguments.isNotEmpty()) {
             val typeString = StringBuilder(declaredType.asElement().toString())
             typeString.append('<')
             for (i in typeArguments.indices) {

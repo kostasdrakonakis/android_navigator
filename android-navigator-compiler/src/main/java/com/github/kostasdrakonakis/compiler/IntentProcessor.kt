@@ -5,7 +5,6 @@ import com.github.kostasdrakonakis.annotation.IntentProperty
 import com.github.kostasdrakonakis.annotation.IntentService
 import com.github.kostasdrakonakis.annotation.IntentType
 import com.github.kostasdrakonakis.annotation.ServiceType
-import com.github.kostasdrakonakis.compiler.extension.error
 import com.github.kostasdrakonakis.compiler.util.ClassHelper
 import com.github.kostasdrakonakis.compiler.util.TypeUtil
 import com.google.auto.service.AutoService
@@ -32,7 +31,9 @@ import javax.lang.model.element.ElementKind
 import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
 import javax.lang.model.util.Elements
+import javax.tools.Diagnostic
 
+@Suppress("CanConvertToMultiDollarString")
 @AutoService(Processor::class)
 @IncrementalAnnotationProcessor(IncrementalAnnotationProcessorType.AGGREGATING)
 class IntentProcessor : AbstractProcessor() {
@@ -112,7 +113,7 @@ class IntentProcessor : AbstractProcessor() {
                 return true
             }
             val typeElement = element as TypeElement
-            val intent = element.getAnnotation(Intent::class.java)
+            val intent = element.getAnnotation(Intent::class.java)!!
             val activity = typeElement.simpleName.toString()
             val packageName = elements.getPackageOf(typeElement).qualifiedName.toString()
             activitiesMap[activity] = IntentData(
@@ -134,7 +135,7 @@ class IntentProcessor : AbstractProcessor() {
             }
             val typeElement = element as TypeElement
             val mirror = element.asType()
-            val intentService = element.getAnnotation(IntentService::class.java)
+            val intentService = element.getAnnotation(IntentService::class.java)!!
             val service = typeElement.simpleName.toString()
             val packageName = elements.getPackageOf(typeElement)
                 .qualifiedName.toString()
@@ -176,7 +177,7 @@ class IntentProcessor : AbstractProcessor() {
                 error("@IntentProperty must be applied to public, protected, package-private fields only.")
                 return true
             }
-            val intentProperty = element.getAnnotation(IntentProperty::class.java)
+            val intentProperty = element.getAnnotation(IntentProperty::class.java)!!
             val activity = typeElement.simpleName.toString()
             val packageName = elements.getPackageOf(typeElement).qualifiedName.toString()
             val intentPropertyData =
@@ -744,6 +745,6 @@ class IntentProcessor : AbstractProcessor() {
     }
 
     private fun error(error: String) {
-        messager.error(error)
+        messager.printMessage(Diagnostic.Kind.ERROR, error)
     }
 }

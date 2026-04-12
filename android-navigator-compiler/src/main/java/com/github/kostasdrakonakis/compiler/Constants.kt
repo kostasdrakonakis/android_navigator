@@ -2,6 +2,7 @@ package com.github.kostasdrakonakis.compiler
 
 import com.squareup.javapoet.ClassName
 
+@Suppress("HasPlatformType", "CanConvertToMultiDollarString")
 internal object Constants {
     internal const val ACTIVITY_FIELD = "activity"
     internal const val GET_INTENT_METHOD = "getIntent"
