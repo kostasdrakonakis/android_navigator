@@ -1,38 +1,36 @@
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdk 36
+    compileSdk = 36
     defaultConfig {
-        applicationId "com.github.kostasdrakonakis.example"
-        minSdkVersion 21
-        targetSdkVersion 36
-        versionCode 1
-        versionName "1.0"
+        applicationId = "com.github.kostasdrakonakis.example"
+        minSdk = 21
+        targetSdk = 36
+        versionCode = 1
+        versionName = "1.0"
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled = false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_21
-        targetCompatibility JavaVersion.VERSION_21
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
     kotlin {
         jvmToolchain(21)
     }
-    namespace 'com.github.kostasdrakonakis.example'
+    namespace = 'com.github.kostasdrakonakis.example'
 }
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.7.1'
-    implementation 'androidx.core:core-ktx:1.17.0'
+    implementation 'androidx.core:core-ktx:1.18.0'
 //    implementation 'com.github.kostasdrakonakis:android-navigator:1.2.6'
-//    kapt 'com.github.kostasdrakonakis:android-navigator-compiler:1.2.6'
+//    annotationProcessor 'com.github.kostasdrakonakis:android-navigator-compiler:1.2.6'
     implementation project(':android-navigator')
     implementation project(':android-navigator-annotations')
-    kapt project(':android-navigator-compiler')
+    annotationProcessor project(':android-navigator-compiler')
 }

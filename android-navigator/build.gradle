@@ -1,34 +1,38 @@
 apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
 
 android {
-    compileSdk 36
+    compileSdk = 36
 
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 36
+        minSdk = 21
     }
 
     buildTypes {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled = false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_21
-        targetCompatibility JavaVersion.VERSION_21
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
     kotlin {
         jvmToolchain(21)
     }
-    namespace 'com.github.kostasdrakonakis.androidnavigator'
+    namespace = 'com.github.kostasdrakonakis.androidnavigator'
+    lint {
+        targetSdk = 36
+    }
+    testOptions {
+        targetSdk = 36
+    }
 }
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.7.1'
-    implementation 'androidx.annotation:annotation:1.9.1'
+    implementation 'androidx.annotation:annotation:1.10.0'
     api project(':android-navigator-annotations')
-    implementation "androidx.core:core-ktx:1.17.0"
+    implementation "androidx.core:core-ktx:1.18.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
