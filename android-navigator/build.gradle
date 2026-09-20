@@ -1,10 +1,10 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
-        minSdk = 21
+        minSdk = 23
     }
 
     buildTypes {
@@ -22,15 +22,15 @@ android {
     }
     namespace = 'com.github.kostasdrakonakis.androidnavigator'
     lint {
-        targetSdk = 36
+        targetSdk = 37
     }
     testOptions {
-        targetSdk = 36
+        targetSdk = 37
     }
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.7.1'
+    implementation 'androidx.appcompat:appcompat:1.8.0'
     implementation 'androidx.annotation:annotation:1.10.0'
     api project(':android-navigator-annotations')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
